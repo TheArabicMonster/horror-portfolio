@@ -2,7 +2,7 @@
 
 import { useRef, useState, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Types pour les événements Three.js
@@ -171,16 +171,16 @@ export default function PortalDoor({
       </mesh>
       
       {/* Label au-dessus */}
-      <Text
-        position={[0, size[1]/2 + 0.25, 0]}
-        fontSize={0.2}
-        color={portalColor}
-        anchorX="center"
-        anchorY="middle"
-        font="https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJU.woff2"
-      >
-        {label}
-      </Text>
+      <Html position={[0, size[1]/2 + 0.25, 0]} center>
+        <div style={{ 
+          fontFamily: 'VT323, monospace', 
+          color: portalColor, 
+          fontSize: '28px',
+          whiteSpace: 'nowrap'
+        }}>
+          {label}
+        </div>
+      </Html>
       
       {/* Ligne indicateur sous le label */}
       <mesh position={[0, size[1]/2 + 0.15, 0]}>

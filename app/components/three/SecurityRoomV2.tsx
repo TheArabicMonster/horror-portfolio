@@ -2,13 +2,16 @@
 
 import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useOptionalAudioContext } from '@/app/context/AudioContext';
 import { useAppContext } from '@/app/context/AppContext';
 import useSafeTexture from '../../hooks/useSafeTexture';
 import CameraController from './CameraController';
 import { getRandomMedia, Media, MediaType } from '../../lib/uploadthing';
+import AnimatedMetalDoor from './AnimatedMetalDoor';
+import { useDoorSound } from '@/app/hooks/useDoorSound';
+import CameraZoomEffect from './CameraZoomEffect';
 
 export interface SecurityRoomV2Props {
   onPortalClick: (type: MediaType) => void;
@@ -96,8 +99,22 @@ interface ScreenProps {
 
 function SurveillanceScreen({ position, label, onHover }: ScreenProps) {
   const [hovered, setHovered] = useState(false);
-  const media = useMemo(() => getRandomMedia(), []);
-  const texture = useSafeTexture(media.url);
+  // Utiliser useMemo avec une fonction qui ne s'exécute qu'une seule fois
+  const media = useMemo(() => {
+    try {
+      return getRandomMedia();
+    } catch (err) {
+      console.error('[SurveillanceScreen] Error getting random media:', err);
+      // Retourner un média par défaut en cas d'erreur
+      return {
+        id: 'fallback',
+        url: '',
+        type: 'illustrations' as MediaType,
+        title: 'Fallback'
+      };
+    }
+  }, []);
+  const texture = useSafeTexture(media?.url);
   const audio = useOptionalAudioContext();
   const { openMedia } = useAppContext();
 
@@ -142,9 +159,16 @@ function SurveillanceScreen({ position, label, onHover }: ScreenProps) {
         />
       </mesh>
       {/* Label */}
-      <Text position={[0, -0.7, 0]} fontSize={0.12} color={hovered ? '#00ff41' : '#666'} anchorX="center">
-        {label}
-      </Text>
+      <Html position={[0, -0.7, 0]} center>
+        <div style={{ 
+          fontFamily: 'VT323, monospace', 
+          color: hovered ? '#00ff41' : '#666666', 
+          fontSize: '18px',
+          whiteSpace: 'nowrap'
+        }}>
+          {label}
+        </div>
+      </Html>
     </group>
   );
 }
@@ -213,17 +237,36 @@ function PortalDoor({ position, type, label, color, onClick }: PortalProps) {
       </mesh>
       
       {/* Label */}
-      <Text position={[0, 1.5, 0.1]} fontSize={0.22} color={hovered ? '#fff' : color} anchorX="center">
-        {label}
-      </Text>
+      <Html position={[0, 1.5, 0.1]} center>
+        <div style={{ 
+          fontFamily: 'VT323, monospace', 
+          color: hovered ? '#ffffff' : color, 
+          fontSize: '32px',
+          whiteSpace: 'nowrap'
+        }}>
+          {label}
+        </div>
+      </Html>
     </group>
   );
 }
 
 // Écran principal
 function MainScreen({ position }: { position: [number, number, number] }) {
-  const media = useMemo(() => getRandomMedia(), []);
-  const texture = useSafeTexture(media.url);
+  const media = useMemo(() => {
+    try {
+      return getRandomMedia();
+    } catch (err) {
+      console.error('[MainScreen] Error getting random media:', err);
+      return {
+        id: 'fallback',
+        url: '',
+        type: 'illustrations' as MediaType,
+        title: 'Fallback'
+      };
+    }
+  }, []);
+  const texture = useSafeTexture(media?.url);
   const lightRef = useRef<THREE.PointLight>(null);
 
   useFrame((state) => {
@@ -256,12 +299,48 @@ export default function SecurityRoomV2({
   onScreenHover,
   debugMode = false,
 }: SecurityRoomV2Props) {
+  console.log("[SecurityRoomV2] Render started");
+  
   const { camera } = useThree();
+  const [openingDoor, setOpeningDoor] = useState<string | null>(null);
+  const [isZooming, setIsZooming] = useState(false);
+  const { playDoorOpen } = useDoorSound();
+
+  useEffect(() => {
+    console.log("[SecurityRoomV2] Mounted");
+  }, []);
+
+  const handlePortalClick = useCallback((type: MediaType) => {
+    if (openingDoor) return; // Déjà en cours
+    
+    setOpeningDoor(type);
+    playDoorOpen();
+    
+    // Attendre fin animation porte (2s) puis zoom
+    setTimeout(() => {
+      setIsZooming(true);
+      
+      // Navigation après zoom (1.5s)
+      setTimeout(() => {
+        onPortalClick(type);
+      }, 1500);
+    }, 2000);
+  }, [onPortalClick, openingDoor, playDoorOpen]);
 
   useEffect(() => {
     camera.position.set(0, 1.6, 4);
     camera.lookAt(0, 1, 0);
   }, [camera]);
+
+  // Compter les écrans
+  const screens = [
+    { pos: [-4.9, 1.0, -0.8], label: "CAM-01" },
+    { pos: [-4.9, 1.0, 0.8], label: "CAM-02" },
+    { pos: [-4.9, -0.3, -0.8], label: "CAM-03" },
+    { pos: [-4.9, -0.3, 0.8], label: "CAM-04" },
+  ];
+
+  console.log("[SecurityRoomV2] Rendering scene elements:", screens.length, "screens");
 
   return (
     <>
@@ -298,9 +377,32 @@ export default function SecurityRoomV2({
       <SurveillanceScreen position={[-4.9, -0.3, 0.8]} label="CAM-04" onHover={onScreenHover} />
       
       {/* Portes (mur droit) - Positions rapprochées pour visibilité */}
-      <PortalDoor position={[4.9, 0, -1.5]} type="illustrations" label="ILLUSTRATIONS" color="#00ff41" onClick={onPortalClick} />
-      <PortalDoor position={[4.9, 0, 0]} type="photos" label="PHOTOS" color="#ffb000" onClick={onPortalClick} />
-      <PortalDoor position={[4.9, 0, 1.5]} type="videos" label="VIDEOS" color="#ff3333" onClick={onPortalClick} />
+      <AnimatedMetalDoor 
+        position={[4.9, 0, -1.5]}
+        type="illustrations"
+        label="ILLUSTRATIONS"
+        color="#00ff41"
+        isOpening={openingDoor === 'illustrations'}
+        onOpenComplete={() => {}}
+      />
+      <AnimatedMetalDoor 
+        position={[4.9, 0, 0]}
+        type="photos"
+        label="PHOTOS"
+        color="#ffb000"
+        isOpening={openingDoor === 'photos'}
+        onOpenComplete={() => {}}
+      />
+      <AnimatedMetalDoor 
+        position={[4.9, 0, 1.5]}
+        type="videos"
+        label="VIDEOS"
+        color="#ff3333"
+        isOpening={openingDoor === 'videos'}
+        onOpenComplete={() => {}}
+      />
+      
+      {isZooming && <CameraZoomEffect target={openingDoor} />}
       
       {/* Écran principal (mur fond) */}
       <MainScreen position={[0, 0.5, -4.9]} />

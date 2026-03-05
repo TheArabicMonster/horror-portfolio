@@ -2,7 +2,7 @@
 
 import { useRef, useState, useMemo, useCallback } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 import useSafeTexture from '../../hooks/useSafeTexture';
 import * as THREE from 'three';
 import { getRandomMedia, Media } from '../../lib/uploadthing';
@@ -135,16 +135,16 @@ function SurveillanceScreen({
       </mesh>
 
       {/* Label sous l'écran */}
-      <Text
-        position={[0, -0.7, 0]}
-        fontSize={0.12}
-        color={hovered ? '#00ff41' : '#666666'}
-        anchorX="center"
-        anchorY="middle"
-        font="https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJU.woff2"
-      >
-        {data.label}
-      </Text>
+      <Html position={[0, -0.7, 0]} center>
+        <div style={{ 
+          fontFamily: 'VT323, monospace', 
+          color: hovered ? '#00ff41' : '#666666', 
+          fontSize: '18px',
+          whiteSpace: 'nowrap'
+        }}>
+          {data.label}
+        </div>
+      </Html>
 
       {/* LED indicateur */}
       <mesh position={[0.7, -0.4, 0.02]}>

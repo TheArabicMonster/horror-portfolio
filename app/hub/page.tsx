@@ -5,9 +5,10 @@
  * @description Hub 3D complet - Bureau de Surveillance style FNAF
  * @author Agent 6 - Routing & State Management
  * @modified Agent 7 - Intégration Easter Eggs et Debug
+ * @modified Fix - Lazy loading SecurityRoomV2 avec debug
  * 
  * Intègre:
- * - SecurityRoom avec callbacks via AppContext
+ * - SecurityRoomV2 avec callbacks via AppContext
  * - DoorPortals onPortalClick → openGallery(type)
  * - MainScreen avec média aléatoire
  * - MediaViewer overlay quand selectedMedia
@@ -16,14 +17,14 @@
  * - DebugOverlay conditionnel
  */
 
-import { useState, useCallback, Suspense, useEffect } from "react";
+import { useState, useCallback, Suspense, useEffect, lazy } from "react";
 import { useRouter } from "next/navigation";
 import { Canvas } from "@react-three/fiber";
 import { motion, AnimatePresence } from "framer-motion";
-import { SecurityRoom } from "../components/three";
 import { Scanlines, CRTOverlay, TerminalText } from "../components/ui";
 import { MediaViewer } from "../components/media";
 import { SceneTransition } from "../components/SceneTransition";
+import TeleportTransition from '../components/three/TeleportTransition';
 import { useAppContext } from "../context/AppContext";
 import { useOptionalAudioContext } from "../context/AudioContext";
 import { Media, MediaType, getRandomMedia, getMediaByType } from "../lib/uploadthing";
@@ -40,6 +41,20 @@ import {
 // Debug
 import { DebugOverlay } from "../components/debug";
 import { ErrorBoundary } from "../components/ErrorBoundary";
+
+// LAZY IMPORT - Force le chargement dynamique avec debug
+const SecurityRoomV2 = lazy(() => {
+  console.log("[LAZY] Loading SecurityRoomV2...");
+  return import("../components/three/SecurityRoomV2")
+    .then(module => {
+      console.log("[LAZY] SecurityRoomV2 loaded successfully!");
+      return module;
+    })
+    .catch(err => {
+      console.error("[LAZY] Failed to load SecurityRoomV2:", err);
+      throw err;
+    });
+});
 
 /**
  * Fallback si WebGL non supporté
@@ -102,21 +117,85 @@ function LoadingScreen() {
 }
 
 /**
- * Loading 3D Scene
+ * Loading 3D Scene - Avec timer pour détecter si bloqué
  */
 function LoadingScene3D() {
+  useEffect(() => {
+    console.log("[LoadingScene3D] ⚠️ Fallback displayed - SecurityRoomV2 not rendering");
+    const timer = setTimeout(() => {
+      console.warn("[LoadingScene3D] ⚠️ Still loading after 5s - possible error or infinite suspense");
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <>
-      <color attach="background" args={['#0a0a0a']} />
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <mesh>
+      <color attach="background" args={['#1a0505']} />
+      {/* Cube rouge avec animation pulsante */}
+      <mesh rotation={[Math.PI / 4, Math.PI / 4, 0]}>
         <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#00ff41" wireframe />
+        <meshStandardMaterial color="#ff3333" wireframe emissive="#ff0000" emissiveIntensity={0.5} />
       </mesh>
     </>
   );
 }
+
+/**
+ * Error Boundary spécifique pour la scène 3D
+ * Capture les erreurs de render et affiche le fallback
+ */
+function SceneErrorFallback({ error, reset }: { error: Error; reset: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center h-full bg-black text-red-500 p-4">
+      <h2 className="text-2xl mb-4">⚠️ ERREUR SCÈNE 3D</h2>
+      <div className="text-sm text-left bg-gray-900 p-4 rounded max-w-lg overflow-auto mb-4">
+        <p className="text-red-400 font-bold">Message:</p>
+        <pre className="text-gray-300 whitespace-pre-wrap">{error.message}</pre>
+        <p className="text-red-400 font-bold mt-2">Stack:</p>
+        <pre className="text-gray-400 text-xs whitespace-pre-wrap">{error.stack}</pre>
+      </div>
+      <button
+        onClick={reset}
+        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+      >
+        Réessayer
+      </button>
+    </div>
+  );
+}
+
+/**
+ * Wrapper pour capturer les erreurs de Suspense
+ */
+function SecurityRoomV2Wrapper(props: {
+  onPortalClick: (type: MediaType) => void;
+  onScreenHover?: (screen: string | null) => void;
+  debugMode?: boolean;
+}) {
+  const [hasError, setHasError] = useState<Error | null>(null);
+
+  if (hasError) {
+    return <SceneErrorFallback error={hasError} reset={() => setHasError(null)} />;
+  }
+
+  return (
+    <ErrorBoundary
+      fallback={
+        <div className="flex items-center justify-center h-full text-red-500">
+          <p>Erreur dans SecurityRoomV2</p>
+        </div>
+      }
+      onError={(error) => {
+        console.error("[SecurityRoomV2Wrapper] Error caught:", error);
+        setHasError(error);
+      }}
+    >
+      <SecurityRoomV2 {...props} />
+    </ErrorBoundary>
+  );
+}
+
+import * as THREE from "three";
+import { useThree } from "@react-three/fiber";
 
 /**
  * Composant Three.js interne pour le debug overlay
@@ -169,9 +248,6 @@ function DebugOverlayInCanvas({ isVisible }: { isVisible: boolean }) {
   );
 }
 
-import * as THREE from "three";
-import { useThree } from "@react-three/fiber";
-
 /**
  * Page Hub - Bureau de Surveillance 3D
  * Point d'entrée vers les différentes galeries
@@ -193,6 +269,10 @@ export default function HubPage() {
   const [webglError, setWebglError] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [mainScreenMedia, setMainScreenMedia] = useState<Media | null>(null);
+  
+  // Teleport transition state
+  const [showTeleport, setShowTeleport] = useState(false);
+  const [teleportText, setTeleportText] = useState<string>('');
 
   // Easter Eggs
   const { isDebugMode } = useKonamiCode();
@@ -210,14 +290,21 @@ export default function HubPage() {
 
   // Gestion du clic sur un portail
   const handlePortalClick = useCallback((type: MediaType) => {
+    if (isTransitioning) return;
     setIsTransitioning(true);
+    setTeleportText(type.toUpperCase());
     audioContext?.playDoorCreak?.();
     
-    // Transition avant navigation
+    // Attendre la fin du zoom (2s porte + 1.5s zoom = 3.5s)
     setTimeout(() => {
-      openGallery(type);
-    }, 400);
-  }, [openGallery, audioContext]);
+      setShowTeleport(true);
+      
+      // Navigation après l'effet de téléportation
+      setTimeout(() => {
+        openGallery(type);
+      }, 300);
+    }, 3500);
+  }, [isTransitioning, openGallery, audioContext]);
 
   // Gestion du hover sur les écrans
   const handleScreenHover = useCallback((screen: string | null) => {
@@ -242,7 +329,22 @@ export default function HubPage() {
     <main className="relative w-full h-screen overflow-hidden bg-horror-bg">
       {/* Canvas 3D */}
       <div className="absolute inset-0 z-0" style={{ pointerEvents: 'auto' }}>
-        <ErrorBoundary>
+        <ErrorBoundary
+          fallback={
+            <div className="flex items-center justify-center h-full bg-black text-red-500 p-4">
+              <div className="text-center">
+                <h2 className="text-2xl mb-4">⚠️ ERREUR SCÈNE 3D</h2>
+                <p className="text-gray-400 mb-4">Vérifiez la console pour les détails</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Recharger la page
+                </button>
+              </div>
+            </div>
+          }
+        >
           <Canvas
             camera={{ 
               position: [0, 1.6, 4], 
@@ -256,7 +358,7 @@ export default function HubPage() {
               powerPreference: "high-performance"
             }}
             onError={(e) => {
-              console.error("Canvas Error:", e);
+              console.error("[Canvas] WebGL Error:", e);
               setWebglError(true);
             }}
             style={{ background: '#0a0a0a' }}
@@ -264,7 +366,7 @@ export default function HubPage() {
           >
             <color attach="background" args={['#0a0a0a']} />
             <Suspense fallback={<LoadingScene3D />}>
-              <SecurityRoom 
+              <SecurityRoomV2Wrapper 
                 onPortalClick={handlePortalClick}
                 onScreenHover={handleScreenHover}
                 debugMode={isDebugMode}
@@ -436,6 +538,12 @@ export default function HubPage() {
 
       {/* Fake Virus */}
       <FakeVirusWindow isVisible={virusVisible} onClose={hideVirus} />
+
+      {/* Teleport Transition Effect */}
+      <TeleportTransition 
+        isActive={showTeleport} 
+        text={teleportText}
+      />
     </main>
   );
 }

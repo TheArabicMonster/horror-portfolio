@@ -2,7 +2,7 @@
 
 import { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 import useSafeTexture from '../../hooks/useSafeTexture';
 import * as THREE from 'three';
 import { getRandomMedia, Media } from '../../lib/uploadthing';
@@ -161,16 +161,16 @@ export default function MainScreen({
         <meshBasicMaterial color="#1a1a1a" />
       </mesh>
 
-      <Text
-        position={[0, -height / 2 - 0.2, 0.01]}
-        fontSize={0.15}
-        color="#00ff41"
-        anchorX="center"
-        anchorY="middle"
-        font="https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJU.woff2"
-      >
-        MAIN DISPLAY - {currentMedia?.type.toUpperCase() || 'STANDBY'}
-      </Text>
+      <Html position={[0, -height / 2 - 0.2, 0.01]} center>
+        <div style={{ 
+          fontFamily: 'VT323, monospace', 
+          color: '#00ff41', 
+          fontSize: '24px',
+          whiteSpace: 'nowrap'
+        }}>
+          MAIN DISPLAY - {currentMedia?.type.toUpperCase() || 'STANDBY'}
+        </div>
+      </Html>
 
       {/* Coins renforcés (style industriel) */}
       {[

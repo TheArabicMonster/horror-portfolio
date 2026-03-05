@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useState, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useTexture, Text } from '@react-three/drei';
+import { useTexture, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { getRandomMedia } from '../../lib/uploadthing';
 
@@ -89,16 +89,16 @@ function SmallScreen({ position, rotation, label }: SmallScreenProps) {
       </mesh>
 
       {/* Label */}
-      <Text
-        position={[0, -0.28, 0]}
-        fontSize={0.05}
-        color={hovered ? '#00ff41' : '#666666'}
-        anchorX="center"
-        anchorY="middle"
-        font="https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJU.woff2"
-      >
-        {label}
-    </Text>
+      <Html position={[0, -0.28, 0]} center>
+        <div style={{ 
+          fontFamily: 'VT323, monospace', 
+          color: hovered ? '#00ff41' : '#666666', 
+          fontSize: '12px',
+          whiteSpace: 'nowrap'
+        }}>
+          {label}
+        </div>
+      </Html>
     </group>
   );
 }

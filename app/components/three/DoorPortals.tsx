@@ -12,7 +12,7 @@
 
 import { useRef, useState, useMemo, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useOptionalAudioContext } from '@/app/context/AudioContext';
 import { useOptionalAppContext } from '@/app/context/AppContext';
@@ -172,16 +172,16 @@ function PortalDoor({
       </mesh>
 
       {/* Label au-dessus */}
-      <Text
-        position={[0, 1.5, 0.1]}
-        fontSize={0.22}
-        color={portalColor}
-        anchorX="center"
-        anchorY="middle"
-        font="https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJU.woff2"
-      >
-        {data.label}
-      </Text>
+      <Html position={[0, 1.5, 0.1]} center>
+        <div style={{ 
+          fontFamily: 'VT323, monospace', 
+          color: portalColor, 
+          fontSize: '32px',
+          whiteSpace: 'nowrap'
+        }}>
+          {data.label}
+        </div>
+      </Html>
 
       {/* Ligne indicateur sous le label */}
       <mesh position={[0, 1.35, 0.05]}>
