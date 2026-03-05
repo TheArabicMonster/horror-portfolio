@@ -9,7 +9,7 @@ import { useAppContext } from '@/app/context/AppContext';
 import useSafeTexture from '../../hooks/useSafeTexture';
 import CameraController from './CameraController';
 import { getRandomMedia, Media, MediaType } from '../../lib/uploadthing';
-import AnimatedMetalDoor from './AnimatedMetalDoor';
+import DoorFNAF from './DoorFNAF';
 import { useDoorSound } from '@/app/hooks/useDoorSound';
 import CameraZoomEffect from './CameraZoomEffect';
 
@@ -351,7 +351,7 @@ export default function SecurityRoomV2({
         target={[0, 1, 0]}
         minPolarAngle={Math.PI / 3}
         maxPolarAngle={Math.PI / 1.8}
-        minAzimuthAngle={-Math.PI / 3}
+        minAzimuthAngle={-Math.PI / 1.5}
         maxAzimuthAngle={Math.PI / 3}
         enableZoom={false}
         enablePan={false}
@@ -376,31 +376,51 @@ export default function SecurityRoomV2({
       <SurveillanceScreen position={[-4.9, -0.3, -0.8]} label="CAM-03" onHover={onScreenHover} />
       <SurveillanceScreen position={[-4.9, -0.3, 0.8]} label="CAM-04" onHover={onScreenHover} />
       
-      {/* Portes (mur droit) - Positions rapprochées pour visibilité */}
-      <AnimatedMetalDoor 
-        position={[4.9, 0, -1.5]}
+      {/* Portes (mur droit) - Espacées pour éviter le chevauchement */}
+      {/* Porte ILLUSTRATIONS - Mur droit (X+), face vers le centre (X-) */}
+      <DoorFNAF
+        position={[4.5, 0, -3.5]}
+        rotation={[0, -Math.PI / 2, 0]}
         type="illustrations"
         label="ILLUSTRATIONS"
-        color="#00ff41"
+        stripeColor="#ffcc00"
+        buttonColor="#00ff41"
         isOpening={openingDoor === 'illustrations'}
         onOpenComplete={() => {}}
+        onClick={() => handlePortalClick('illustrations')}
+        labelSize="20px"
       />
-      <AnimatedMetalDoor 
-        position={[4.9, 0, 0]}
+
+      {/* Porte PHOTOS - Mur droit (X+), face vers le centre (X-) */}
+      <DoorFNAF
+        position={[4.5, 0, 0]}
+        rotation={[0, -Math.PI / 2, 0]}
         type="photos"
         label="PHOTOS"
-        color="#ffb000"
+        stripeColor="#ffcc00"
+        buttonColor="#ffaa00"
         isOpening={openingDoor === 'photos'}
         onOpenComplete={() => {}}
+        onClick={() => handlePortalClick('photos')}
+        labelSize="20px"
       />
-      <AnimatedMetalDoor 
-        position={[4.9, 0, 1.5]}
+
+      {/* Porte VIDEOS - Mur droit (X+), face vers le centre (X-) */}
+      <DoorFNAF
+        position={[4.5, 0, 3.5]}
+        rotation={[0, -Math.PI / 2, 0]}
         type="videos"
         label="VIDEOS"
-        color="#ff3333"
+        stripeColor="#ffcc00"
+        buttonColor="#ff3333"
         isOpening={openingDoor === 'videos'}
         onOpenComplete={() => {}}
+        onClick={() => handlePortalClick('videos')}
+        labelSize="20px"
       />
+      
+      {/* Éclairage portes */}
+      <pointLight position={[3, 2.5, 0]} intensity={0.8} color="#ffffff" distance={8} />
       
       {isZooming && <CameraZoomEffect target={openingDoor} />}
       
