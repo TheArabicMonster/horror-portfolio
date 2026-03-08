@@ -312,10 +312,8 @@ export default function HubPage() {
   // Gestion du démarrage du glitch
   const handleGlitchStart = useCallback((type: MediaType) => {
     setShowGlitch(true);
-    // Masquer le glitch après la navigation
-    setTimeout(() => {
-      setShowGlitch(false);
-    }, 800);
+    // Le glitch reste affiché jusqu'à ce que la page gallery soit chargée
+    // Le composant sera démonté par Next.js lors de la navigation
   }, []);
 
   // Gestion du hover sur les écrans

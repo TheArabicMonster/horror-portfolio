@@ -366,13 +366,11 @@ export default function SecurityRoomV2({
       // Appeler le callback pour afficher le glitch hors du Canvas
       onGlitchStart?.(targetType);
       
-      console.log('[Animation] Ended, starting glitch');
+      console.log('[Animation] Ended, starting glitch and navigating immediately');
       
-      // Navigation après le glitch (0.7s)
-      setTimeout(() => {
-        onPortalClick(targetType);
-        setOpeningDoor(null);
-      }, 700);
+      // Navigation immédiate - le glitch reste affiché pendant le chargement
+      onPortalClick(targetType);
+      // Ne pas remettre openingDoor à null - le composant sera démonté par la navigation
       return;
     }
     

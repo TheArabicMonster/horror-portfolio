@@ -124,7 +124,10 @@ export default function GalleryPage() {
   const typeColor = typeColors[type];
 
   return (
-    <main 
+    <motion.main 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       className="min-h-screen relative overflow-hidden"
       style={{ backgroundColor: "#0a0a0a" }}
     >
@@ -255,6 +258,6 @@ export default function GalleryPage() {
           </div>
         </motion.div>
       )}
-    </main>
+    </motion.main>
   );
 }
