@@ -291,29 +291,38 @@ export default function HubPage() {
     setMainScreenMedia(getRandomMedia());
   }, []);
 
+  // Précharger les pages gallery pour accélérer la navigation
+  useEffect(() => {
+    router.prefetch('/gallery/illustrations');
+    router.prefetch('/gallery/photos');
+    router.prefetch('/gallery/videos');
+  }, [router]);
+
   // Gestion du clic sur un portail
   const handlePortalClick = useCallback((type: MediaType) => {
-    if (isTransitioning) return;
+    console.log('[Hub] handlePortalClick called for:', type);
+    if (isTransitioning) {
+      console.log('[Hub] Transition already in progress, ignoring');
+      return;
+    }
     setIsTransitioning(true);
     setTeleportText(type.toUpperCase());
     audioContext?.playDoorCreak?.();
     
-    // Attendre la fin du zoom (2s porte + 1.5s zoom = 3.5s)
+    console.log('[Hub] Starting 600ms timer before navigation');
+    // Attendre 0.6s avant de naviguer
     setTimeout(() => {
-      setShowTeleport(true);
-      
-      // Navigation après l'effet de téléportation
-      setTimeout(() => {
-        openGallery(type);
-      }, 300);
-    }, 3500);
-  }, [isTransitioning, openGallery, audioContext]);
+      console.log('[Hub] Navigating to:', `/gallery/${type}`);
+      router.push(`/gallery/${type}`);
+    }, 600);
+  }, [isTransitioning, audioContext, router]);
 
   // Gestion du démarrage du glitch
   const handleGlitchStart = useCallback((type: MediaType) => {
+    console.log('[Hub] Glitch triggered for:', type);
     setShowGlitch(true);
-    // Le glitch reste affiché jusqu'à ce que la page gallery soit chargée
-    // Le composant sera démonté par Next.js lors de la navigation
+    console.log('[Hub] showGlitch set to TRUE');
+    // Le glitch reste affiché jusqu'à la navigation
   }, []);
 
   // Gestion du hover sur les écrans

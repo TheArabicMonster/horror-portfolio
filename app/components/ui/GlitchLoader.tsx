@@ -7,6 +7,8 @@ interface GlitchLoaderProps {
 }
 
 export default function GlitchLoader({ message = 'LOADING...' }: GlitchLoaderProps) {
+  console.log('[GlitchLoader] MOUNTED - Loading screen displayed');
+  
   return (
     <AnimatePresence>
       <motion.div
@@ -67,7 +69,7 @@ export default function GlitchLoader({ message = 'LOADING...' }: GlitchLoaderPro
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: '100%' }}
-              transition={{ duration: 0.7, ease: 'linear' }}
+              transition={{ duration: 0.6, ease: 'linear' }}
               style={{
                 height: '100%',
                 background: 'linear-gradient(90deg, #00ff41, #fff, #00ff41)',

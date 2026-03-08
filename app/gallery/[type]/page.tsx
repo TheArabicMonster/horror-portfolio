@@ -127,7 +127,7 @@ export default function GalleryPage() {
     <motion.main 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
       className="min-h-screen relative overflow-hidden"
       style={{ backgroundColor: "#0a0a0a" }}
     >
