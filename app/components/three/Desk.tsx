@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useState, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useTexture, Html } from '@react-three/drei';
+import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { getRandomMedia } from '../../lib/uploadthing';
 
@@ -21,18 +21,32 @@ interface SmallScreenProps {
   position: [number, number, number];
   rotation: [number, number, number];
   label: string;
+  imageUrl?: string;
 }
 
 /**
  * Petit écran sur le bureau
  */
-function SmallScreen({ position, rotation, label }: SmallScreenProps) {
+function SmallScreen({ position, rotation, label, imageUrl }: SmallScreenProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
+  const [error, setError] = useState(false);
 
-  // Texture aléatoire
+  // Pour les GIFs, on utilise l'overlay HTML
+  const isGif = imageUrl?.toLowerCase().endsWith('.gif');
+
+  // Texture pour les écrans non-GIF
   const media = useMemo(() => getRandomMedia(), []);
-  const texture = useTexture(media.url);
+  const textureUrl = imageUrl && !isGif ? imageUrl : media.url;
+  
+  // Charger texture seulement si pas GIF
+  const texture = useMemo(() => {
+    if (isGif) return null;
+    const loader = new THREE.TextureLoader();
+    const tex = loader.load(textureUrl);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }, [textureUrl, isGif]);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -52,13 +66,22 @@ function SmallScreen({ position, rotation, label }: SmallScreenProps) {
     document.body.style.cursor = 'default';
   }, []);
 
-  const screenMaterial = useMemo(() => new THREE.MeshStandardMaterial({
-    map: texture,
-    color: '#ffffff',
-    emissive: '#112211',
-    emissiveIntensity: 0.2,
-    roughness: 0.3,
-  }), [texture]);
+  // Matériau différent selon GIF ou pas
+  const screenMaterial = useMemo(() => {
+    if (isGif) {
+      return new THREE.MeshStandardMaterial({
+        color: '#111111',
+        roughness: 0.3,
+      });
+    }
+    return new THREE.MeshStandardMaterial({
+      map: texture,
+      color: '#ffffff',
+      emissive: '#ffffff',
+      emissiveIntensity: 0.2,
+      roughness: 0.3,
+    });
+  }, [texture, isGif]);
 
   return (
     <group position={position} rotation={rotation}>
@@ -72,13 +95,21 @@ function SmallScreen({ position, rotation, label }: SmallScreenProps) {
         <meshStandardMaterial color="#1a1a1a" metalness={0.5} roughness={0.7} />
       </mesh>
 
+      {/* Lumière devant l'écran */}
+      <pointLight 
+        position={[0, 0, 0.5]} 
+        intensity={0.5} 
+        distance={2}
+        color="#ffffff"
+      />
+
       {/* Cadre de l'écran */}
       <mesh position={[0, 0, -0.02]}>
         <boxGeometry args={[0.6, 0.4, 0.04]} />
         <meshStandardMaterial color="#0a0a0a" roughness={0.8} />
       </mesh>
 
-      {/* Écran */}
+      {/* Écran Three.js */}
       <mesh
         ref={meshRef}
         onPointerOver={handlePointerOver}
@@ -87,6 +118,48 @@ function SmallScreen({ position, rotation, label }: SmallScreenProps) {
       >
         <planeGeometry args={[0.55, 0.35]} />
       </mesh>
+
+      {/* Overlay Html pour les GIFs - APPROCHE SIMPLIFIÉE */}
+      {isGif && imageUrl && (
+        <Html 
+          position={[0, 0, 0.02]} 
+          transform
+          occlude
+          style={{
+            width: '160px',
+            height: '100px',
+            pointerEvents: 'none',
+          }}
+        >
+          <div 
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              backgroundColor: '#000',
+            }}
+          >
+            <img 
+              src={imageUrl}
+              alt={label}
+              onError={() => setError(true)}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+            {error && (
+              <div style={{ color: 'red', fontSize: '10px', position: 'absolute' }}>
+                ERR
+              </div>
+            )}
+          </div>
+        </Html>
+      )}
 
       {/* Label */}
       <Html position={[0, -0.28, 0]} center>
@@ -155,11 +228,12 @@ export default function Desk({
         label="CAM-01"
       />
 
-      {/* Petit écran centre */}
+      {/* Petit écran centre - avec toy-bonnie.gif */}
       <SmallScreen
         position={[0, 0.65, 0.3]}
         rotation={[-0.15, 0, 0]}
-        label="MAIN"
+        label="BONNIE"
+        imageUrl="/toy-bonnie.gif"
       />
 
       {/* Petit écran droite */}

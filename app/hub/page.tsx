@@ -28,6 +28,7 @@ import TeleportTransition from '../components/three/TeleportTransition';
 import { useAppContext } from "../context/AppContext";
 import { useOptionalAudioContext } from "../context/AudioContext";
 import { Media, MediaType, getRandomMedia, getMediaByType } from "../lib/uploadthing";
+import GlitchLoader from "../components/ui/GlitchLoader";
 
 // Easter Eggs
 import { 
@@ -169,6 +170,7 @@ function SceneErrorFallback({ error, reset }: { error: Error; reset: () => void 
 function SecurityRoomV2Wrapper(props: {
   onPortalClick: (type: MediaType) => void;
   onScreenHover?: (screen: string | null) => void;
+  onGlitchStart?: (type: MediaType) => void;
   debugMode?: boolean;
 }) {
   const [hasError, setHasError] = useState<Error | null>(null);
@@ -273,6 +275,7 @@ export default function HubPage() {
   // Teleport transition state
   const [showTeleport, setShowTeleport] = useState(false);
   const [teleportText, setTeleportText] = useState<string>('');
+  const [showGlitch, setShowGlitch] = useState(false);
 
   // Easter Eggs
   const { isDebugMode } = useKonamiCode();
@@ -305,6 +308,15 @@ export default function HubPage() {
       }, 300);
     }, 3500);
   }, [isTransitioning, openGallery, audioContext]);
+
+  // Gestion du démarrage du glitch
+  const handleGlitchStart = useCallback((type: MediaType) => {
+    setShowGlitch(true);
+    // Masquer le glitch après la navigation
+    setTimeout(() => {
+      setShowGlitch(false);
+    }, 800);
+  }, []);
 
   // Gestion du hover sur les écrans
   const handleScreenHover = useCallback((screen: string | null) => {
@@ -369,6 +381,7 @@ export default function HubPage() {
               <SecurityRoomV2Wrapper 
                 onPortalClick={handlePortalClick}
                 onScreenHover={handleScreenHover}
+                onGlitchStart={handleGlitchStart}
                 debugMode={isDebugMode}
               />
               {/* Debug overlay dans le canvas */}
@@ -544,6 +557,9 @@ export default function HubPage() {
         isActive={showTeleport} 
         text={teleportText}
       />
+
+      {/* Glitch Loader - Hors du Canvas */}
+      {showGlitch && <GlitchLoader />}
     </main>
   );
 }

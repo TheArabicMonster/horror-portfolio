@@ -202,8 +202,12 @@ export default function DoorFNAF({
   const frameThickness = 0.2;
 
   // Animation d'ouverture avec easing lourd
+  // Utiliser une ref pour éviter les redémarrages d'animation
+  const animationStartedRef = useRef(false);
+  
   useEffect(() => {
-    if (isOpening && openProgress < 1) {
+    if (isOpening && !animationStartedRef.current) {
+      animationStartedRef.current = true;
       const startTime = Date.now();
       const duration = 2000; // 2 secondes
 
@@ -227,7 +231,13 @@ export default function DoorFNAF({
 
       animate();
     }
-  }, [isOpening, onOpenComplete, openProgress]);
+    
+    // Reset quand isOpening redevient false
+    if (!isOpening) {
+      animationStartedRef.current = false;
+      setOpenProgress(0);
+    }
+  }, [isOpening, onOpenComplete]);
 
   // Animation pulsante du bouton
   useEffect(() => {

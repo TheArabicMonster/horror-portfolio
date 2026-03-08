@@ -58,3 +58,13 @@ body {
   pointer-events: none;
   z-index: 9999;
 }
+
+/* Scanlines animation keyframes */
+@keyframes scanlines {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 4px;
+  }
+}

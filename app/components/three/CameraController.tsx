@@ -30,6 +30,8 @@ export interface CameraControllerProps {
   enableZoom?: boolean;
   /** Activer/désactiver le pan */
   enablePan?: boolean;
+  /** Activer/désactiver les contrôles */
+  enabled?: boolean;
 }
 
 /**
@@ -46,6 +48,7 @@ export default function CameraController({
   maxPolarAngle = Math.PI / 1.8,
   enableZoom = false,
   enablePan = false,
+  enabled = true,
 }: CameraControllerProps) {
   const { camera } = useThree();
   const controlsRef = useRef<any>(null);
@@ -97,6 +100,7 @@ export default function CameraController({
       enablePan={enablePan}
       target={target}
       makeDefault
+      enabled={enabled}
     />
   );
 }

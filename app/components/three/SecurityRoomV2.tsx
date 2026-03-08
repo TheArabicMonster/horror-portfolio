@@ -11,11 +11,11 @@ import CameraController from './CameraController';
 import { getRandomMedia, Media, MediaType } from '../../lib/uploadthing';
 import DoorFNAF from './DoorFNAF';
 import { useDoorSound } from '@/app/hooks/useDoorSound';
-import CameraZoomEffect from './CameraZoomEffect';
 
 export interface SecurityRoomV2Props {
   onPortalClick: (type: MediaType) => void;
   onScreenHover?: (screen: string | null) => void;
+  onGlitchStart?: (type: MediaType) => void;
   debugMode?: boolean;
 }
 
@@ -71,11 +71,11 @@ function Room({ width = 10, height = 6, depth = 10 }: RoomProps) {
 // Néon clignotant
 function FlickeringNeon({ position }: { position: [number, number, number] }) {
   const lightRef = useRef<THREE.PointLight>(null);
-  const [intensity, setIntensity] = useState(1);
+  const [intensity, setIntensity] = useState(2.5);
 
   useFrame((state) => {
     if (state.clock.elapsedTime % 0.1 < 0.05) {
-      setIntensity(0.8 + Math.random() * 0.4);
+      setIntensity(2.5 + Math.random() * 1.5);
     }
   });
 
@@ -85,7 +85,7 @@ function FlickeringNeon({ position }: { position: [number, number, number] }) {
         <cylinderGeometry args={[0.02, 0.02, 2, 8]} />
         <meshBasicMaterial color="#e0e8ff" />
       </mesh>
-      <pointLight ref={lightRef} color="#e0e8ff" intensity={intensity} distance={5} decay={2} />
+      <pointLight ref={lightRef} color="#e0e8ff" intensity={intensity * 3} distance={10} decay={2} />
     </group>
   );
 }
@@ -297,13 +297,23 @@ function MainScreen({ position }: { position: [number, number, number] }) {
 export default function SecurityRoomV2({ 
   onPortalClick,
   onScreenHover,
+  onGlitchStart,
   debugMode = false,
 }: SecurityRoomV2Props) {
   console.log("[SecurityRoomV2] Render started");
   
   const { camera } = useThree();
-  const [openingDoor, setOpeningDoor] = useState<string | null>(null);
-  const [isZooming, setIsZooming] = useState(false);
+  const [openingDoor, setOpeningDoor] = useState<MediaType | null>(null);
+  
+  // État pour l'animation caméra
+  const [cameraAnim, setCameraAnim] = useState<{
+    active: boolean;
+    targetDoor: { position: [number, number, number]; type: MediaType } | null;
+    startTime: number;
+    startRotation: THREE.Quaternion | null;
+    startPosition: THREE.Vector3 | null;
+  }>({ active: false, targetDoor: null, startTime: 0, startRotation: null, startPosition: null });
+  
   const { playDoorOpen } = useDoorSound();
 
   useEffect(() => {
@@ -311,26 +321,98 @@ export default function SecurityRoomV2({
   }, []);
 
   const handlePortalClick = useCallback((type: MediaType) => {
-    if (openingDoor) return; // Déjà en cours
+    if (openingDoor || cameraAnim.active) return; // Déjà en cours
+    
+    console.log('[Animation] Started, door:', type);
+    
+    // Positions des portes
+    const doorPositions: Record<MediaType, [number, number, number]> = {
+      illustrations: [4.5, 0, -3.5],
+      photos: [4.5, 0, 0],
+      videos: [4.5, 0, 3.5],
+    };
     
     setOpeningDoor(type);
+    setCameraAnim({
+      active: true,
+      targetDoor: { position: doorPositions[type], type },
+      startTime: Date.now(),
+      startRotation: camera.quaternion.clone(),
+      startPosition: camera.position.clone(),
+    });
     playDoorOpen();
-    
-    // Attendre fin animation porte (2s) puis zoom
-    setTimeout(() => {
-      setIsZooming(true);
-      
-      // Navigation après zoom (1.5s)
-      setTimeout(() => {
-        onPortalClick(type);
-      }, 1500);
-    }, 2000);
-  }, [onPortalClick, openingDoor, playDoorOpen]);
+  }, [openingDoor, cameraAnim.active, playDoorOpen]);
 
+  // Initialisation de la caméra - ne pas reset pendant l'animation
   useEffect(() => {
-    camera.position.set(0, 1.6, 4);
-    camera.lookAt(0, 1, 0);
-  }, [camera]);
+    if (!cameraAnim.active) {
+      camera.position.set(0, 1.6, 4);
+      camera.lookAt(0, 1, 0);
+    }
+  }, [camera, cameraAnim.active]);
+
+  // Animation caméra vers la porte
+  useFrame((state) => {
+    if (!cameraAnim.active || !cameraAnim.targetDoor || !cameraAnim.startRotation || !cameraAnim.startPosition) return;
+    
+    const elapsed = (Date.now() - cameraAnim.startTime) / 1000;
+    const duration = 1.5;
+    
+    if (elapsed >= duration) {
+      // Animation terminée, déclencher le glitch externe
+      const targetType = cameraAnim.targetDoor!.type;
+      setCameraAnim({ active: false, targetDoor: null, startTime: 0, startRotation: null, startPosition: null });
+      
+      // Appeler le callback pour afficher le glitch hors du Canvas
+      onGlitchStart?.(targetType);
+      
+      console.log('[Animation] Ended, starting glitch');
+      
+      // Navigation après le glitch (0.7s)
+      setTimeout(() => {
+        onPortalClick(targetType);
+        setOpeningDoor(null);
+      }, 700);
+      return;
+    }
+    
+    // Easing smooth (ease-in-out-cubic)
+    const t = elapsed / duration;
+    const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    
+    // Position cible : 0.5m devant la porte
+    const targetPos = cameraAnim.targetDoor.position;
+    const finalCameraPos = new THREE.Vector3(
+      targetPos[0] - 0.5,
+      targetPos[1] + 1.6,
+      targetPos[2]
+    );
+    
+    // Interpolation position avec vibration
+    state.camera.position.lerpVectors(
+      cameraAnim.startPosition,
+      finalCameraPos,
+      eased
+    );
+    state.camera.position.y += Math.sin(elapsed * 20) * 0.02; // Vibration headbob
+    
+    // Interpolation rotation smooth
+    const targetQuaternion = new THREE.Quaternion();
+    const targetLookAt = new THREE.Vector3(targetPos[0], targetPos[1] + 1.5, targetPos[2]);
+    const rotationMatrix = new THREE.Matrix4().lookAt(
+      state.camera.position,
+      targetLookAt,
+      new THREE.Vector3(0, 1, 0)
+    );
+    targetQuaternion.setFromRotationMatrix(rotationMatrix);
+    
+    // Slerp pour rotation smooth
+    state.camera.quaternion.slerpQuaternions(
+      cameraAnim.startRotation,
+      targetQuaternion,
+      eased
+    );
+  });
 
   // Compter les écrans
   const screens = [
@@ -355,10 +437,11 @@ export default function SecurityRoomV2({
         maxAzimuthAngle={Math.PI / 3}
         enableZoom={false}
         enablePan={false}
+        enabled={!cameraAnim.active}
       />
       
       {/* Lumière ambiante */}
-      <ambientLight intensity={0.5} color="#2a2a2a" />
+      <ambientLight intensity={0.4} color="#2a2a2a" />
       
       {/* Lumière directionnelle */}
       <directionalLight position={[5, 5, 5]} intensity={0.5} color="#ffffff" />
@@ -366,9 +449,9 @@ export default function SecurityRoomV2({
       {/* Pièce */}
       <Room width={10} height={6} depth={10} />
       
-      {/* Néons */}
-      <FlickeringNeon position={[0, 2.7, 0]} />
-      <FlickeringNeon position={[0, 2.7, 3]} />
+      {/* Néons plafond - collés au plafond (Y = 2.95, juste sous le plafond à Y=3) */}
+      <FlickeringNeon position={[-2.5, 2.95, 0]} />  {/* Gauche */}
+      <FlickeringNeon position={[2.5, 2.95, 0]} />   {/* Droite */}
       
       {/* Écrans de surveillance (mur gauche) - Grid 2x2 compact */}
       <SurveillanceScreen position={[-4.9, 1.0, -0.8]} label="CAM-01" onHover={onScreenHover} />
@@ -421,8 +504,6 @@ export default function SecurityRoomV2({
       
       {/* Éclairage portes */}
       <pointLight position={[3, 2.5, 0]} intensity={0.8} color="#ffffff" distance={8} />
-      
-      {isZooming && <CameraZoomEffect target={openingDoor} />}
       
       {/* Écran principal (mur fond) */}
       <MainScreen position={[0, 0.5, -4.9]} />
