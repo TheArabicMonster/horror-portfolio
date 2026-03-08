@@ -327,9 +327,9 @@ export default function SecurityRoomV2({
     
     // Positions des portes
     const doorPositions: Record<MediaType, [number, number, number]> = {
-      illustrations: [4.5, 0, -3.5],
-      photos: [4.5, 0, 0],
-      videos: [4.5, 0, 3.5],
+      illustrations: [4.5, -2, -3.5],
+      photos: [4.5, -2, 0],
+      videos: [4.5, -2, 3.5],
     };
     
     setOpeningDoor(type);
@@ -492,7 +492,7 @@ export default function SecurityRoomV2({
       {/* Portes (mur droit) - Espacées pour éviter le chevauchement */}
       {/* Porte ILLUSTRATIONS - Mur droit (X+), face vers le centre (X-) */}
       <DoorFNAF
-        position={[4.5, 0, -3.5]}
+        position={[4.5, -2, -3.5]}
         rotation={[0, -Math.PI / 2, 0]}
         type="illustrations"
         label="ILLUSTRATIONS"
@@ -506,7 +506,7 @@ export default function SecurityRoomV2({
 
       {/* Porte PHOTOS - Mur droit (X+), face vers le centre (X-) */}
       <DoorFNAF
-        position={[4.5, 0, 0]}
+        position={[4.5, -2, 0]}
         rotation={[0, -Math.PI / 2, 0]}
         type="photos"
         label="PHOTOS"
@@ -520,7 +520,7 @@ export default function SecurityRoomV2({
 
       {/* Porte VIDEOS - Mur droit (X+), face vers le centre (X-) */}
       <DoorFNAF
-        position={[4.5, 0, 3.5]}
+        position={[4.5, -2, 3.5]}
         rotation={[0, -Math.PI / 2, 0]}
         type="videos"
         label="VIDEOS"
