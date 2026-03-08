@@ -383,28 +383,26 @@ export default function SecurityRoomV2({
     const targetPos = cameraAnim.targetDoor.position;
     const finalPos = new THREE.Vector3(targetPos[0] - 0.5, targetPos[1] + 1.6, targetPos[2]);
     
-    // Point de contrôle DYNAMIQUE selon la porte visée
-    // Crée un arc de cercle qui mène de face à la porte spécifique
+    // Point de contrôle pour courbe de Bézier - doit être ENTRE start et door
     const midX = (startPos.x + finalPos.x) / 2;
     const midY = (startPos.y + finalPos.y) / 2;
     
     // Position Z de la porte (-3.5, 0, ou 3.5)
     const doorZ = targetPos[2];
     
-    // Pour créer un arc vers la porte, on déplace le point de contrôle
-    // vers le centre de la pièce (Z=0) mais aussi vers la porte
-    // Plus la porte est éloignée en Z, plus l'arc est prononcé
-    const arcStrength = 2.0; // Force de la courbe
-    const controlZ = doorZ * 0.5; // Décalé à mi-chemin vers la porte
-    
-    // Point de contrôle : milieu X, milieu Y, arc en Z
+    // Point de contrôle : milieu X, milieu Y, milieu Z entre caméra et porte
     const controlPos = new THREE.Vector3(
       midX, // Milieu X
-      midY, // Milieu Y
-      controlZ + (startPos.z > 0 ? -arcStrength : arcStrength) // Arc vers le centre puis vers porte
+      midY, // Milieu Y  
+      (startPos.z + doorZ) / 2 // Milieu Z entre caméra et porte
     );
     
-    console.log('[Camera] Start:', startPos.z.toFixed(2), 'DoorZ:', doorZ.toFixed(2), 'ControlZ:', controlPos.z.toFixed(2));
+    // Pour créer un arc, on déplace le point de contrôle latéralement
+    // selon la position de la porte (décalage sur X pour créer la courbe)
+    const lateralOffset = doorZ * 0.3; // Décalage vers la porte
+    controlPos.x += lateralOffset;
+    
+    console.log('[Camera] Start:', startPos.z.toFixed(2), 'DoorZ:', doorZ.toFixed(2), 'ControlZ:', controlPos.z.toFixed(2), 'ControlX:', controlPos.x.toFixed(2));
     
     let currentPos = new THREE.Vector3();
     

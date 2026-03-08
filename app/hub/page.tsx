@@ -320,8 +320,15 @@ export default function HubPage() {
   // Gestion du démarrage du glitch
   const handleGlitchStart = useCallback((type: MediaType) => {
     console.log('[Hub] Glitch triggered for:', type);
-    setShowGlitch(true);
-    console.log('[Hub] showGlitch set to TRUE');
+    // Éviter le double rendu si déjà actif
+    setShowGlitch(prev => {
+      if (prev) {
+        console.log('[Hub] Glitch already active, ignoring duplicate call');
+        return prev;
+      }
+      console.log('[Hub] showGlitch set to TRUE');
+      return true;
+    });
     // Le glitch reste affiché jusqu'à la navigation
   }, []);
 
