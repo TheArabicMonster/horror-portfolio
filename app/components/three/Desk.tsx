@@ -180,7 +180,7 @@ function SmallScreen({ position, rotation, label, imageUrl }: SmallScreenProps) 
  * Bureau avec écrans et chaise
  */
 export default function Desk({
-  position = [0, -0.8, 2],
+  position = [0, -2.8, 2],
 }: DeskProps) {
   // Matériaux mémoïsés
   const deskMaterial = useMemo(() => new THREE.MeshStandardMaterial({

@@ -40,7 +40,7 @@ export interface CameraControllerProps {
  */
 export default function CameraController({
   mode = 'orbit',
-  initialPosition = [0, 1.6, 4],
+  initialPosition = [0, -2.8, 1.5],
   target = [0, 1, 0],
   minAzimuthAngle = -Math.PI / 3,
   maxAzimuthAngle = Math.PI / 3,

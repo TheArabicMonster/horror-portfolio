@@ -327,9 +327,9 @@ export default function SecurityRoomV2({
     
     // Positions des portes
     const doorPositions: Record<MediaType, [number, number, number]> = {
-      illustrations: [4.5, -2, -3.5],
-      photos: [4.5, -2, 0],
-      videos: [4.5, -2, 3.5],
+      illustrations: [4.5, -3, -3.5],
+      photos: [4.5, -3, 0],
+      videos: [4.5, -3, 3.5],
     };
     
     setOpeningDoor(type);
@@ -346,7 +346,7 @@ export default function SecurityRoomV2({
   // Initialisation de la caméra - ne pas reset pendant l'animation
   useEffect(() => {
     if (!cameraAnim.active) {
-      camera.position.set(0, 1.6, 4);
+      camera.position.set(0, -2.8, 1.5);
       camera.lookAt(0, 1, 0);
     }
   }, [camera, cameraAnim.active]);
@@ -459,7 +459,7 @@ export default function SecurityRoomV2({
       {/* Contrôles Caméra */}
       <CameraController
         mode="orbit"
-        initialPosition={[0, 1.6, 4]}
+        initialPosition={[0, -2.8, 1.5]}
         target={[0, 1, 0]}
         minPolarAngle={Math.PI / 3}
         maxPolarAngle={Math.PI / 1.8}
@@ -492,7 +492,7 @@ export default function SecurityRoomV2({
       {/* Portes (mur droit) - Espacées pour éviter le chevauchement */}
       {/* Porte ILLUSTRATIONS - Mur droit (X+), face vers le centre (X-) */}
       <DoorFNAF
-        position={[4.5, -2, -3.5]}
+        position={[4.5, -3, -3.5]}
         rotation={[0, -Math.PI / 2, 0]}
         type="illustrations"
         label="ILLUSTRATIONS"
@@ -506,7 +506,7 @@ export default function SecurityRoomV2({
 
       {/* Porte PHOTOS - Mur droit (X+), face vers le centre (X-) */}
       <DoorFNAF
-        position={[4.5, -2, 0]}
+        position={[4.5, -3, 0]}
         rotation={[0, -Math.PI / 2, 0]}
         type="photos"
         label="PHOTOS"
@@ -520,7 +520,7 @@ export default function SecurityRoomV2({
 
       {/* Porte VIDEOS - Mur droit (X+), face vers le centre (X-) */}
       <DoorFNAF
-        position={[4.5, -2, 3.5]}
+        position={[4.5, -3, 3.5]}
         rotation={[0, -Math.PI / 2, 0]}
         type="videos"
         label="VIDEOS"
@@ -539,7 +539,7 @@ export default function SecurityRoomV2({
       <MainScreen position={[0, 0.5, -4.9]} />
       
       {/* Bureau au centre de la pièce - ÉLOIGNÉ de la caméra */}
-      <group position={[0, -0.8, 0]}>
+      <group position={[0, -2.8, 0]}>
         {/* Plateau bureau - PLUS GRAND */}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[4, 0.15, 2.5]} />
