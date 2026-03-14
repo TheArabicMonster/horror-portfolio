@@ -353,97 +353,58 @@ export default function SecurityRoomV2({
     }
   }, [camera, cameraAnim.active]);
 
-  // Animation caméra vers la porte - Deux phases
+  // Animation caméra vers la porte
   useFrame((state) => {
     if (!cameraAnim.active || !cameraAnim.targetDoor || !cameraAnim.startRotation || !cameraAnim.startPosition) return;
-    
+
     const elapsed = (Date.now() - cameraAnim.startTime) / 1000;
-    const duration = 1.5; // 1.5s total (plus rapide)
-    const slowPhaseEnd = 0.8; // 0.8s phase lente (53% du temps)
-    
+    const duration = 2.2;
+
     if (elapsed >= duration) {
-      // Animation terminée, déclencher le glitch externe
       const targetType = cameraAnim.targetDoor!.type;
-      
-      console.log('[SecurityRoomV2] Camera animation ENDED, calling onGlitchStart then onPortalClick for:', targetType);
-      
-      // Appeler le callback pour afficher le glitch hors du Canvas
       onGlitchStart?.(targetType);
-      
-      // Navigation IMMÉDIATE (le timer est dans hub/page.tsx)
-      console.log('[SecurityRoomV2] Calling onPortalClick IMMEDIATELY for:', targetType);
       onPortalClick(targetType);
-      
-      // Arrêter l'animation mais garder la caméra en place
       setCameraAnim(prev => ({ ...prev, active: false }));
-      // Ne pas remettre openingDoor à null - le composant sera démonté par la navigation
       return;
     }
-    
-    // Distance totale à parcourir
+
     const startPos = cameraAnim.startPosition;
     const targetPos = cameraAnim.targetDoor.position;
     const finalPos = new THREE.Vector3(targetPos[0] - 0.5, targetPos[1] + 1.6, targetPos[2]);
-    
-    // Point de contrôle pour courbe de Bézier - doit être ENTRE start et door
-    const midX = (startPos.x + finalPos.x) / 2;
-    const midY = (startPos.y + finalPos.y) / 2;
-    
-    // Position Z de la porte (-3.5, 0, ou 3.5)
-    const doorZ = targetPos[2];
-    
-    // Point de contrôle : milieu X, milieu Y, milieu Z entre caméra et porte
-    const controlPos = new THREE.Vector3(
-      midX, // Milieu X
-      midY, // Milieu Y  
-      (startPos.z + doorZ) / 2 // Milieu Z entre caméra et porte
+
+    // Bézier cubique — 2 points de contrôle pour une approche face-à-face
+    // P1 : avance en X tout en commençant à s'aligner sur le Z de la porte
+    const p1 = new THREE.Vector3(
+      startPos.x + 2.0,
+      startPos.y,
+      startPos.z + (finalPos.z - startPos.z) * 0.5
     );
-    
-    // Pour créer un arc, on déplace le point de contrôle latéralement
-    // selon la position de la porte (décalage sur X pour créer la courbe)
-    const lateralOffset = doorZ * 0.3; // Décalage vers la porte
-    controlPos.x += lateralOffset;
-    
-    console.log('[Camera] Start:', startPos.z.toFixed(2), 'DoorZ:', doorZ.toFixed(2), 'ControlZ:', controlPos.z.toFixed(2), 'ControlX:', controlPos.x.toFixed(2));
-    
-    let currentPos = new THREE.Vector3();
-    
-    // Fonction pour calculer un point sur une courbe de Bézier quadratique
-    const getBezierPoint = (t: number, p0: THREE.Vector3, p1: THREE.Vector3, p2: THREE.Vector3) => {
-      const u = 1 - t;
-      const tt = t * t;
-      const uu = u * u;
-      
-      const point = new THREE.Vector3();
-      point.x = uu * p0.x + 2 * u * t * p1.x + tt * p2.x;
-      point.y = uu * p0.y + 2 * u * t * p1.y + tt * p2.y;
-      point.z = uu * p0.z + 2 * u * t * p1.z + tt * p2.z;
-      
-      return point;
-    };
-    
-    // Easing smooth ease-in-out-cubic pour accélération naturelle
+    // P2 : directement devant la porte (même Z), garantit l'approche en ligne droite finale
+    const p2 = new THREE.Vector3(
+      finalPos.x - 1.8,
+      finalPos.y,
+      finalPos.z
+    );
+
+    // Easing quintic ease-in-out : départ et arrivée très doux
     const t = Math.min(elapsed / duration, 1);
-    const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    
-    // Progression sur la courbe de Bézier
-    currentPos = getBezierPoint(eased, startPos, controlPos, finalPos);
-    
-    // Appliquer position + vibration
-    state.camera.position.copy(currentPos);
-    state.camera.position.y += Math.sin(elapsed * 20) * 0.02;
-    
-    // Rotation : regarder vers la porte avec blend progressif
-    // Le blend est plus rapide au début pour orienter vers la porte, puis s'ajuste
-    const targetLookAt = new THREE.Vector3(targetPos[0], targetPos[1] + 1.5, targetPos[2]);
+    const eased = t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+
+    // Calcul du point sur la Bézier cubique
+    const u = 1 - eased;
+    const pos = new THREE.Vector3(
+      u*u*u*startPos.x + 3*u*u*eased*p1.x + 3*u*eased*eased*p2.x + eased*eased*eased*finalPos.x,
+      u*u*u*startPos.y + 3*u*u*eased*p1.y + 3*u*eased*eased*p2.y + eased*eased*eased*finalPos.y,
+      u*u*u*startPos.z + 3*u*u*eased*p1.z + 3*u*eased*eased*p2.z + eased*eased*eased*finalPos.z,
+    );
+    state.camera.position.copy(pos);
+
+    // Rotation : suit la porte en continu sur toute la durée
+    const lookTarget = new THREE.Vector3(targetPos[0], targetPos[1] + 1.5, targetPos[2]);
     const targetQuaternion = new THREE.Quaternion();
-    const rotationMatrix = new THREE.Matrix4().lookAt(state.camera.position, targetLookAt, new THREE.Vector3(0, 1, 0));
+    const rotationMatrix = new THREE.Matrix4().lookAt(state.camera.position, lookTarget, new THREE.Vector3(0, 1, 0));
     targetQuaternion.setFromRotationMatrix(rotationMatrix);
-    
-    // Blend progressif : plus rapide au début (0.3s), puis maintien
-    const rotationBlend = Math.min(elapsed / 0.4, 1);
-    const easedBlend = rotationBlend < 0.5 ? 2 * rotationBlend * rotationBlend : 1 - Math.pow(-2 * rotationBlend + 2, 2) / 2;
-    state.camera.quaternion.slerpQuaternions(cameraAnim.startRotation, targetQuaternion, easedBlend);
+    state.camera.quaternion.slerpQuaternions(cameraAnim.startRotation, targetQuaternion, eased);
   });
 
   // Compter les écrans
