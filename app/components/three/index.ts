@@ -33,7 +33,7 @@ export type { ScreenMonitorProps } from './ScreenMonitor';
 
 // Portails
 export { default as DoorPortals } from './DoorPortals';
-export type { DoorPortalsProps, PortalType } from './DoorPortals';
+export type { DoorPortalsProps } from './DoorPortals';
 
 export { default as PortalDoor } from './PortalDoor';
 export type { PortalDoorProps } from './PortalDoor';
