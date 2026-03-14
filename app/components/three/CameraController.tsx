@@ -40,7 +40,7 @@ export interface CameraControllerProps {
  */
 export default function CameraController({
   mode = 'orbit',
-  initialPosition = [0, -2.8, 1.5],
+  initialPosition = [0, -2.5, 2.0],
   target = [0, 1, 0],
   minAzimuthAngle = -Math.PI / 3,
   maxAzimuthAngle = Math.PI / 3,
@@ -54,11 +54,7 @@ export default function CameraController({
   const controlsRef = useRef<any>(null);
   const [isLocked, setIsLocked] = useState(false);
 
-  // Position initiale de la caméra
-  useEffect(() => {
-    camera.position.set(...initialPosition);
-    camera.lookAt(...target);
-  }, [camera, initialPosition, target]);
+  // Position initiale gérée par le parent (SecurityRoomV2)
 
   // Mode PointerLock
   const handleLock = useCallback(() => {

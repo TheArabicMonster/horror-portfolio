@@ -346,8 +346,10 @@ export default function SecurityRoomV2({
   // Initialisation de la caméra - ne pas reset pendant l'animation
   useEffect(() => {
     if (!cameraAnim.active) {
-      camera.position.set(0, -2.8, 1.5);
-      camera.lookAt(0, 1, 0);
+      camera.position.set(0, -1.6, 3.5);
+      camera.lookAt(0, -2.0, 0);
+      (camera as THREE.PerspectiveCamera).fov = 75;
+      (camera as THREE.PerspectiveCamera).updateProjectionMatrix();
     }
   }, [camera, cameraAnim.active]);
 
@@ -459,10 +461,10 @@ export default function SecurityRoomV2({
       {/* Contrôles Caméra */}
       <CameraController
         mode="orbit"
-        initialPosition={[0, -2.8, 1.5]}
-        target={[0, 1, 0]}
+        initialPosition={[0, -1.6, 2.5]}
+        target={[0, -1, 0]}
         minPolarAngle={Math.PI / 3}
-        maxPolarAngle={Math.PI / 1.8}
+        maxPolarAngle={Math.PI / 1.72}
         minAzimuthAngle={-Math.PI / 1.5}
         maxAzimuthAngle={Math.PI / 3}
         enableZoom={false}
@@ -539,7 +541,7 @@ export default function SecurityRoomV2({
       <MainScreen position={[0, 0.5, -4.9]} />
       
       {/* Bureau au centre de la pièce - ÉLOIGNÉ de la caméra */}
-      <group position={[0, -2.8, 0]}>
+      <group position={[0, -2.2, 0]}>
         {/* Plateau bureau - PLUS GRAND */}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[4, 0.15, 2.5]} />
