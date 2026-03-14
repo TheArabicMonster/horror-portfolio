@@ -182,9 +182,9 @@ export default function BootSequence({
 
         {/* Zone de boot */}
         <div className="bg-black border-2 border-[#00ff41] p-6 shadow-[0_0_20px_rgba(0,255,65,0.2)]">
-          {/* Lignes de boot */}
-          <div className="space-y-1 mb-6 min-h-[300px]">
-            <AnimatePresence>
+          {/* Lignes de boot — hauteur fixe, les anciennes lignes disparaissent par le haut */}
+          <div className="h-[300px] overflow-hidden relative mb-6">
+            <div className="absolute bottom-0 left-0 right-0 space-y-1">
               {bootLines.slice(0, visibleLines).map((line, index) => (
                 <motion.div
                   key={index}
@@ -197,46 +197,46 @@ export default function BootSequence({
                   {line}
                 </motion.div>
               ))}
-            </AnimatePresence>
 
-            {/* Barre de chargement */}
-            {showLoadingBar && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-4"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-[#00ff41] text-lg" style={{ textShadow: "0 0 5px #00ff41" }}>
-                    {loadingProgress < 100
-                      ? `[${"█".repeat(Math.floor(loadingProgress / 10))}${"░".repeat(
-                          10 - Math.floor(loadingProgress / 10)
-                        )}] ${Math.floor(loadingProgress)}%`
-                      : "[██████████] 100%"}
-                  </span>
-                  {loadingProgress < 100 && (
-                    <motion.span
-                      animate={{ opacity: [1, 0] }}
-                      transition={{ duration: 0.3, repeat: Infinity }}
-                      className="text-[#00ff41]"
+              {/* Barre de chargement */}
+              {showLoadingBar && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-4"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-[#00ff41] text-lg" style={{ textShadow: "0 0 5px #00ff41" }}>
+                      {loadingProgress < 100
+                        ? `[${"█".repeat(Math.floor(loadingProgress / 10))}${"░".repeat(
+                            10 - Math.floor(loadingProgress / 10)
+                          )}] ${Math.floor(loadingProgress)}%`
+                        : "[██████████] 100%"}
+                    </span>
+                    {loadingProgress < 100 && (
+                      <motion.span
+                        animate={{ opacity: [1, 0] }}
+                        transition={{ duration: 0.3, repeat: Infinity }}
+                        className="text-[#00ff41]"
+                      >
+                        _
+                      </motion.span>
+                    )}
+                  </div>
+
+                  {loadingProgress >= 100 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-[#00ff41] mt-2"
+                      style={{ textShadow: "0 0 5px #00ff41" }}
                     >
-                      _
-                    </motion.span>
+                      SYSTEM READY.
+                    </motion.div>
                   )}
-                </div>
-
-                {loadingProgress >= 100 && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-[#00ff41] mt-2"
-                    style={{ textShadow: "0 0 5px #00ff41" }}
-                  >
-                    SYSTEM READY.
-                  </motion.div>
-                )}
-              </motion.div>
-            )}
+                </motion.div>
+              )}
+            </div>
           </div>
 
           {/* Bouton ENTER SYSTEM */}
