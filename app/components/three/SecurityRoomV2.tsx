@@ -558,7 +558,7 @@ export default function SecurityRoomV2({
         rotation={[0, -Math.PI / 2, 0]}
         type="videos"
         label="VIDEOS"
-        stripeColor="#ffcc00"
+        stripeColor="#cc1111"
         buttonColor="#ff3333"
         isOpening={openingDoor === 'videos'}
         onOpenComplete={() => {}}

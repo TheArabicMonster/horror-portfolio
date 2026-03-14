@@ -196,6 +196,18 @@ export default function DoorFNAF({
   const hazardTexture = useMemo(() => createHazardStripeTexture(), []);
   const metalTexture = useMemo(() => createMetalTexture(), []);
 
+  // Teintes dérivées du stripeColor
+  // Mélange avec gris foncé pour préserver la teinte sans saturation excessive
+  const doorBodyColor = useMemo(() => {
+    const base = new THREE.Color('#3a3a3a');
+    return base.lerp(new THREE.Color(stripeColor), 0.45);
+  }, [stripeColor]);
+
+  const frameColor = useMemo(() => {
+    const base = new THREE.Color('#1a1a1a');
+    return base.lerp(new THREE.Color(stripeColor), 0.25);
+  }, [stripeColor]);
+
   // Dimensions
   const doorWidth = 2;
   const doorHeight = 3;
@@ -291,8 +303,8 @@ export default function DoorFNAF({
       <mesh position={[0, doorHeight + frameThickness / 2, 0]}>
         <boxGeometry args={[doorWidth + frameThickness * 2, frameThickness, doorDepth + 0.05]} />
         <meshStandardMaterial 
-          color="#1a1a1a" 
-          metalness={0.8} 
+          color={frameColor}
+          metalness={0.8}
           roughness={0.6}
           map={metalTexture}
         />
@@ -302,8 +314,8 @@ export default function DoorFNAF({
       <mesh position={[0, -frameThickness / 2, 0]}>
         <boxGeometry args={[doorWidth + frameThickness * 2, frameThickness, doorDepth + 0.05]} />
         <meshStandardMaterial 
-          color="#1a1a1a" 
-          metalness={0.8} 
+          color={frameColor}
+          metalness={0.8}
           roughness={0.6}
           map={metalTexture}
         />
@@ -313,8 +325,8 @@ export default function DoorFNAF({
       <mesh position={[-(doorWidth / 2 + frameThickness / 2), doorHeight / 2, 0]}>
         <boxGeometry args={[frameThickness, doorHeight, doorDepth + 0.05]} />
         <meshStandardMaterial 
-          color="#1a1a1a" 
-          metalness={0.8} 
+          color={frameColor}
+          metalness={0.8}
           roughness={0.6}
           map={metalTexture}
         />
@@ -324,8 +336,8 @@ export default function DoorFNAF({
       <mesh position={[doorWidth / 2 + frameThickness / 2, doorHeight / 2, 0]}>
         <boxGeometry args={[frameThickness, doorHeight, doorDepth + 0.05]} />
         <meshStandardMaterial 
-          color="#1a1a1a" 
-          metalness={0.8} 
+          color={frameColor}
+          metalness={0.8}
           roughness={0.6}
           map={metalTexture}
         />
@@ -338,8 +350,8 @@ export default function DoorFNAF({
         {/* Porte principale - partie métal centrale */}
         <mesh position={[0, doorHeight / 2, 0]}>
           <boxGeometry args={[doorWidth, doorHeight * 0.6, doorDepth]} />
-          <meshStandardMaterial 
-            color="#4a4a4a"
+          <meshStandardMaterial
+            color={doorBodyColor}
             map={metalTexture}
             metalness={0.7}
             roughness={0.5}
