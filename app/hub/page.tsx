@@ -458,7 +458,7 @@ export default function HubPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              className="absolute bottom-24 left-6 p-4 bg-horror-panel/80 border border-horror-terminal/30 rounded pointer-events-auto"
+              className="absolute bottom-44 left-6 p-4 bg-horror-panel/80 border border-horror-terminal/30 rounded pointer-events-auto"
             >
               <TerminalText 
                 text={`[CAM-${hoveredScreen.toUpperCase()}]`}
