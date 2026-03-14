@@ -109,7 +109,7 @@ function SurveillanceScreen({ position, label, onHover }: ScreenProps) {
       return {
         id: 'fallback',
         url: '',
-        type: 'illustrations' as MediaType,
+        type: 'photos' as MediaType,
         title: 'Fallback'
       };
     }
@@ -261,7 +261,7 @@ function MainScreen({ position }: { position: [number, number, number] }) {
       return {
         id: 'fallback',
         url: '',
-        type: 'illustrations' as MediaType,
+        type: 'photos' as MediaType,
         title: 'Fallback'
       };
     }
@@ -303,6 +303,7 @@ export default function SecurityRoomV2({
   console.log("[SecurityRoomV2] Render started");
   
   const { camera } = useThree();
+  const glitchTriggeredRef = useRef(false);
   const [openingDoor, setOpeningDoor] = useState<MediaType | null>(null);
   
   // État pour l'animation caméra
@@ -327,11 +328,12 @@ export default function SecurityRoomV2({
     
     // Positions des portes
     const doorPositions: Record<MediaType, [number, number, number]> = {
-      illustrations: [4.5, -3, -3.5],
-      photos: [4.5, -3, 0],
+      photos: [4.5, -3, -3.5],
+      gif: [4.5, -3, 0],
       videos: [4.5, -3, 3.5],
     };
     
+    glitchTriggeredRef.current = false;
     setOpeningDoor(type);
     setCameraAnim({
       active: true,
@@ -362,7 +364,10 @@ export default function SecurityRoomV2({
 
     if (elapsed >= duration) {
       const targetType = cameraAnim.targetDoor!.type;
-      onGlitchStart?.(targetType);
+      if (!glitchTriggeredRef.current) {
+        onGlitchStart?.(targetType);
+        glitchTriggeredRef.current = true;
+      }
       onPortalClick(targetType);
       setCameraAnim(prev => ({ ...prev, active: false }));
       return;
@@ -385,6 +390,12 @@ export default function SecurityRoomV2({
       finalPos.y,
       finalPos.z
     );
+
+    // Déclencher le GlitchLoader dès que la caméra entre dans la porte (85% de l'animation)
+    if (!glitchTriggeredRef.current && elapsed / duration >= 0.85) {
+      glitchTriggeredRef.current = true;
+      onGlitchStart?.(cameraAnim.targetDoor.type);
+    }
 
     // Easing quintic ease-in-out : départ et arrivée très doux
     const t = Math.min(elapsed / duration, 1);
@@ -453,31 +464,31 @@ export default function SecurityRoomV2({
       <SurveillanceScreen position={[-4.9, -0.3, 0.8]} label="CAM-04" onHover={onScreenHover} />
       
       {/* Portes (mur droit) - Espacées pour éviter le chevauchement */}
-      {/* Porte ILLUSTRATIONS - Mur droit (X+), face vers le centre (X-) */}
+      {/* Porte PHOTOS - Mur droit (X+), face vers le centre (X-) */}
       <DoorFNAF
         position={[4.5, -3, -3.5]}
         rotation={[0, -Math.PI / 2, 0]}
-        type="illustrations"
-        label="ILLUSTRATIONS"
-        stripeColor="#ffcc00"
-        buttonColor="#00ff41"
-        isOpening={openingDoor === 'illustrations'}
-        onOpenComplete={() => {}}
-        onClick={() => handlePortalClick('illustrations')}
-        labelSize="20px"
-      />
-
-      {/* Porte PHOTOS - Mur droit (X+), face vers le centre (X-) */}
-      <DoorFNAF
-        position={[4.5, -3, 0]}
-        rotation={[0, -Math.PI / 2, 0]}
         type="photos"
         label="PHOTOS"
-        stripeColor="#ffcc00"
-        buttonColor="#ffaa00"
+        stripeColor="#00aa33"
+        buttonColor="#00ff55"
         isOpening={openingDoor === 'photos'}
         onOpenComplete={() => {}}
         onClick={() => handlePortalClick('photos')}
+        labelSize="20px"
+      />
+
+      {/* Porte GIF - Mur droit (X+), face vers le centre (X-) */}
+      <DoorFNAF
+        position={[4.5, -3, 0]}
+        rotation={[0, -Math.PI / 2, 0]}
+        type="gif"
+        label="GIF"
+        stripeColor="#ff7700"
+        buttonColor="#ffaa00"
+        isOpening={openingDoor === 'gif'}
+        onOpenComplete={() => {}}
+        onClick={() => handlePortalClick('gif')}
         labelSize="20px"
       />
 

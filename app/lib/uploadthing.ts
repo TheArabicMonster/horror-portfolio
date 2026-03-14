@@ -1,6 +1,6 @@
 export const uploadthingConfig = {
   media: {
-    illustrations: [
+    photos: [
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W2AOAKKkxWF4Kr9OJ5L3ZQbCXuh8gi6cUVNeY", // wolverinw griffe.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WGVcCW17F4fMXb3QnN16ZzVBHu7YjsWyrUG8T", // d7d7e8082965c6c2ef63e0194e12f480.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WDf72XGacj7E6wXUiWelvtAL4Mso0OSqryCng", // no brain all mouth.png
@@ -22,9 +22,13 @@ export const uploadthingConfig = {
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WJwIvAO2SDj7RegYk6N1b4HCIZ8PxplfBaOsh", // IMG_3251.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WQH5QZj6BEfxZAPqgV7WJ3XHItKevi4mGywuY", // 022esdvgasdfsga0b025dd1a3f7b7530304b25a0909.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W1AOkdtWO09jLn82gSDhQMEyt4Zm3acbl7qVB", // 1 CHANCE BALL.png
-    ],
-    photos: [
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WPshKJXT96BkDiuoTZYhCvVKXd4jcLmqSeEtw", // ce twt qui dit de la merde.png
+    ],
+    gif: [
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WU2CqLugRq6s2uQbEHGc1lUy8DPiZofNAeOBh", title: "speed moi hoche" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WvWGKs6h1O4WUMLRTCXFfNQ3leuyEbpYat2jA", title: "enough" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WicThKKZwJNRtyxLm8r3lgZ4oecMX07aS1qjC", title: "mordre lèvre" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WHb1TY6GzCTd2YjA98Q1BmVUWEa7o4IS3whiF", title: "c tro" },
     ],
     videos: [
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W1eDnXmUWO09jLn82gSDhQMEyt4Zm3acbl7qV", // WIN_20260201_15_45_17_Pro.mp4
@@ -33,16 +37,10 @@ export const uploadthingConfig = {
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W2ipL3RkxWF4Kr9OJ5L3ZQbCXuh8gi6cUVNeY", // mateen not quite my tempo.mp4
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WaOr4y0P0m4LbstvkBoQJHAGNw3TZezXC2gpj", // oh mince pas billy.mp4
     ],
-    gifs: [
-      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WU2CqLugRq6s2uQbEHGc1lUy8DPiZofNAeOBh", // speed+moi+hoche.gif
-      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WvWGKs6h1O4WUMLRTCXFfNQ3leuyEbpYat2jA", // enough+.gif
-      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WicThKKZwJNRtyxLm8r3lgZ4oecMX07aS1qjC", // mordre+lèvre.gif
-      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WHb1TY6GzCTd2YjA98Q1BmVUWEa7o4IS3whiF", // c+tro.gif
-    ]
   }
 };
 
-export type MediaType = 'illustrations' | 'photos' | 'videos';
+export type MediaType = 'photos' | 'gif' | 'videos';
 
 export interface Media {
   id: string;
@@ -60,20 +58,24 @@ function generateId(): string {
 // Transforme les URLs de config en objets Media
 export function getAllMedia(): Media[] {
   const media: Media[] = [];
-  
+
   (Object.keys(uploadthingConfig.media) as MediaType[]).forEach((type) => {
-    const urls = uploadthingConfig.media[type];
-    urls.forEach((url, index) => {
+    const entries = uploadthingConfig.media[type];
+    entries.forEach((entry, index) => {
+      const url = typeof entry === 'string' ? entry : entry.url;
+      const title = typeof entry === 'string'
+        ? `${type.charAt(0).toUpperCase() + type.slice(1)} ${index + 1}`
+        : entry.title;
       media.push({
         id: generateId(),
         url,
         type,
-        title: `${type.charAt(0).toUpperCase() + type.slice(1)} ${index + 1}`,
+        title,
         thumbnail: type === 'videos' ? url.replace('.mp4', '.jpg') : undefined,
       });
     });
   });
-  
+
   return media;
 }
 

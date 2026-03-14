@@ -45,7 +45,7 @@ export default function GalleryPage() {
   // Récupère et valide le type depuis les params
   const type = useMemo(() => {
     const rawType = params.type as string;
-    const validTypes: MediaType[] = ["illustrations", "photos", "videos"];
+    const validTypes: MediaType[] = ["photos", "gif", "videos"];
     
     if (validTypes.includes(rawType as MediaType)) {
       return rawType as MediaType;
@@ -114,14 +114,21 @@ export default function GalleryPage() {
     );
   }
 
-  // Couleurs selon le type
+  // Couleurs selon le type (en accord avec les portes du hub)
   const typeColors = {
-    illustrations: "#00ff41",
-    photos: "#ffb000",
+    photos: "#00ff55",
+    gif: "#ffaa00",
     videos: "#ff3333",
   };
 
+  const typeLabels = {
+    photos: "PHOTOS",
+    gif: "GIF",
+    videos: "VIDEOS",
+  };
+
   const typeColor = typeColors[type];
+  const typeLabel = typeLabels[type];
 
   return (
     <motion.main 
@@ -174,7 +181,7 @@ export default function GalleryPage() {
                 fontFamily: "'VT323', monospace",
               }}
             >
-              {type}
+              {typeLabel}
             </h1>
             <p className="text-horror-terminal/50 text-xs mt-1 font-mono">
               ARCHIVE SECURE // LEVEL 4 CLEARANCE

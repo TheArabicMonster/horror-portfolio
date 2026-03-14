@@ -119,8 +119,8 @@ export function MediaCard({ media, onClick, index = 0 }: MediaCardProps) {
 
 function getTypeLabel(type: MediaType): string {
   const labels: Record<MediaType, string> = {
-    illustrations: 'Illustration',
     photos: 'Photo',
+    gif: 'GIF',
     videos: 'Vidéo',
   };
   return labels[type];

@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect, useMemo } from 'react';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
+import { MediaType } from '../../lib/uploadthing';
 
 /**
  * @file DoorFNAF.tsx
@@ -16,7 +17,7 @@ export interface DoorFNAFProps {
   /** Rotation [x, y, z] - default [0, 0, 0] (facing Z+) */
   rotation?: [number, number, number];
   /** Type de contenu */
-  type: 'illustrations' | 'photos' | 'videos';
+  type: MediaType;
   /** Label affiché au-dessus */
   label: string;
   /** Couleur des rayures warning */

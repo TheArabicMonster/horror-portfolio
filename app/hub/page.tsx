@@ -76,7 +76,7 @@ function WebGLFallback() {
           WebGL non disponible. Accès aux archives en mode 2D.
         </p>
         <div className="space-y-3">
-          {(["illustrations", "photos", "videos"] as MediaType[]).map((type) => (
+          {(["photos", "gif", "videos"] as MediaType[]).map((type) => (
             <button
               key={type}
               onClick={() => openGallery(type)}
@@ -293,8 +293,8 @@ export default function HubPage() {
 
   // Précharger les pages gallery pour accélérer la navigation
   useEffect(() => {
-    router.prefetch('/gallery/illustrations');
     router.prefetch('/gallery/photos');
+    router.prefetch('/gallery/gif');
     router.prefetch('/gallery/videos');
   }, [router]);
 
@@ -309,12 +309,7 @@ export default function HubPage() {
     setTeleportText(type.toUpperCase());
     audioContext?.playDoorCreak?.();
     
-    console.log('[Hub] Starting 600ms timer before navigation');
-    // Attendre 0.6s avant de naviguer
-    setTimeout(() => {
-      console.log('[Hub] Navigating to:', `/gallery/${type}`);
-      router.push(`/gallery/${type}`);
-    }, 600);
+    router.push(`/gallery/${type}`);
   }, [isTransitioning, audioContext, router]);
 
   // Gestion du démarrage du glitch

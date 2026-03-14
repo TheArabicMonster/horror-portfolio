@@ -147,7 +147,7 @@ export function MediaViewer({ media, onClose, onNext, onPrev }: MediaViewerProps
               />
 
               {/* Media Content */}
-              <div className="relative aspect-video min-w-[300px] overflow-hidden sm:min-w-[500px] md:min-w-[700px] lg:min-w-[900px]">
+              <div className="relative aspect-video w-[90vw] max-w-[900px] overflow-hidden">
                 {isVideo ? (
                   <VHSPlayer src={media.url} title={media.title} />
                 ) : imageError ? (
