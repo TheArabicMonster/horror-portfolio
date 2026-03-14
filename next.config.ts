@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.ufs.sh",
       },
+      {
+        protocol: "https",
+        hostname: "tenor.com",
+      },
+      {
+        protocol: "https",
+        hostname: "media.tenor.com",
+      },
     ],
     // Désactive l'optimisation pour export statique si nécessaire
     // unoptimized: process.env.EXPORT_STATIC === "true",

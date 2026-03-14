@@ -29,6 +29,11 @@ export const uploadthingConfig = {
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WvWGKs6h1O4WUMLRTCXFfNQ3leuyEbpYat2jA", title: "enough" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WicThKKZwJNRtyxLm8r3lgZ4oecMX07aS1qjC", title: "mordre lèvre" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WHb1TY6GzCTd2YjA98Q1BmVUWEa7o4IS3whiF", title: "c tro" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WUcbT2RgRq6s2uQbEHGc1lUy8DPiZofNAeOBh", title: "crash out" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WFKlqmIdiyuxJ0NKDFpcZwoaWMQnetH2dq1UE", title: "frigo" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WbyW86ZzixTleqvDjVrzmdUJMIkyPgpQ1ZOtL", title: "livre rakai" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WVEIdDKltg2q0G1asplkCOLhbMeXnujFyf67m", title: "not my tempo" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WDzXoQWacj7E6wXUiWelvtAL4Mso0OSqryCng", title: "essaie de pas rire" },
     ],
     videos: [
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W1eDnXmUWO09jLn82gSDhQMEyt4Zm3acbl7qV", // WIN_20260201_15_45_17_Pro.mp4
