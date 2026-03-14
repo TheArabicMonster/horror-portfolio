@@ -15,10 +15,13 @@ const vt323 = VT323({
 });
 
 export const metadata: Metadata = {
-  title: "HORROR PORTFOLIO | SYSTEM v3.0",
-  description: "An immersive horror 3D portfolio experience",
-  keywords: ["horror", "portfolio", "3D", "interactive", "dark"],
-  authors: [{ name: "Horror Portfolio" }],
+  title: "3arbi sans sucre",
+  description: "Un portfolio qui regroupe tous les GIFs de 3arbi sans sucre",
+  keywords: ["3arbi sans sucre", "gif", "portfolio", "twitch", "streamer", "emote", "clip"],
+  authors: [{ name: "3arbi sans sucre" }],
+  icons: {
+    icon: "/look.webp",
+  },
 };
 
 export const viewport: Viewport = {
