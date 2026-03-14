@@ -286,15 +286,27 @@ function DeskScreenGif() {
     return gifUrl.replace('giphy.gif', 'giphy.mp4');
   }, []);
 
+  // Groupe centré à Y=0.85 (desk group space) → monitor bottom à Y=0.475, desk top à Y=0.075
+  // Coords locales (relative au groupe) : monitor bottom = -0.375, desk top = -0.775
   return (
-    <group position={[0, 0.5, -0.8]}>
+    <group position={[0, 0.85, -0.8]}>
       {/* Corps du moniteur */}
       <mesh>
         <boxGeometry args={[1.25, 0.75, 0.08]} />
         <meshStandardMaterial color="#111111" roughness={0.9} />
       </mesh>
-      {/* Écran vidéo — texture Three.js native, couvre exactement le mesh */}
+      {/* Écran vidéo */}
       <DeskScreenVideo videoUrl={videoUrl} />
+      {/* Col du pied — relie le bas du moniteur au bureau */}
+      <mesh position={[0, -0.575, 0]}>
+        <boxGeometry args={[0.08, 0.4, 0.1]} />
+        <meshStandardMaterial color="#1a1a1a" roughness={0.8} metalness={0.3} />
+      </mesh>
+      {/* Base du pied — repose sur le plateau du bureau */}
+      <mesh position={[0, -0.75, 0.05]}>
+        <boxGeometry args={[0.45, 0.05, 0.28]} />
+        <meshStandardMaterial color="#1a1a1a" roughness={0.8} metalness={0.3} />
+      </mesh>
     </group>
   );
 }
