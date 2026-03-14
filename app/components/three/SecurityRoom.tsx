@@ -13,6 +13,7 @@ import DoorPortals from './DoorPortals';
 import MainScreen from './MainScreen';
 import Desk from './Desk';
 import CameraController from './CameraController';
+import { type MediaType } from '@/app/lib/uploadthing';
 
 /**
  * @file SecurityRoom.tsx
@@ -23,7 +24,7 @@ import CameraController from './CameraController';
 
 export interface SecurityRoomProps {
   /** Callback quand un portail est cliqué */
-  onPortalClick: (type: 'illustrations' | 'photos' | 'videos') => void;
+  onPortalClick: (type: MediaType) => void;
   /** Callback quand un écran est survolé */
   onScreenHover?: (screen: string | null) => void;
   /** Mode debug: active wireframe et axes helper */
