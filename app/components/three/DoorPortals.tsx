@@ -16,6 +16,7 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useOptionalAudioContext } from '@/app/context/AudioContext';
 import { useOptionalAppContext } from '@/app/context/AppContext';
+import { type MediaType } from '@/app/lib/uploadthing';
 
 /**
  * @file DoorPortals.tsx
@@ -29,19 +30,17 @@ import { useOptionalAppContext } from '@/app/context/AppContext';
  * - Connecté à AppContext pour la navigation
  */
 
-export type PortalType = 'illustrations' | 'photos' | 'videos';
-
 export interface DoorPortalsProps {
   /** Position du groupe de portes */
   position?: [number, number, number];
   /** Callback au clic sur un portail (optionnel, sinon utilise AppContext) */
-  onPortalClick?: (type: PortalType) => void;
+  onPortalClick?: (type: MediaType) => void;
   /** Mode preview: affiche un média au lieu d'ouvrir la galerie */
   previewMode?: boolean;
 }
 
 interface PortalData {
-  id: PortalType;
+  id: MediaType;
   position: [number, number, number];
   label: string;
   color: string;
@@ -56,7 +55,7 @@ function PortalDoor({
   onClick,
 }: {
   data: PortalData;
-  onClick: (type: PortalType) => void;
+  onClick: (type: MediaType) => void;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const portalRef = useRef<THREE.Mesh>(null);
@@ -221,16 +220,16 @@ export default function DoorPortals({
   // Configuration des 3 portails
   const portals = useMemo<PortalData[]>(() => [
     {
-      id: 'illustrations',
+      id: 'photos',
       position: [0, 0, -2],
-      label: 'ILLUSTRATIONS',
+      label: 'PHOTOS',
       color: '#00ff41',
       hoverColor: '#66ff88',
     },
     {
-      id: 'photos',
+      id: 'gif',
       position: [0, 0, 0],
-      label: 'PHOTOS',
+      label: 'GIF',
       color: '#ffb000',
       hoverColor: '#ffcc44',
     },
@@ -243,7 +242,7 @@ export default function DoorPortals({
     },
   ], []);
 
-  const handlePortalClick = useCallback((type: PortalType) => {
+  const handlePortalClick = useCallback((type: MediaType) => {
     // Jouer le son de grincement de porte
     if (audioContext) {
       audioContext.playDoorCreak();
