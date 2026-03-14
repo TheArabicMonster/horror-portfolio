@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
+import { Html, useVideoTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { useOptionalAudioContext } from '@/app/context/AudioContext';
 import { useAppContext } from '@/app/context/AppContext';
@@ -247,6 +247,54 @@ function PortalDoor({ position, type, label, color, onClick }: PortalProps) {
           {label}
         </div>
       </Html>
+    </group>
+  );
+}
+
+// ==================== GIF ÉCRAN BUREAU ====================
+
+const DESK_GIF_URLS = [
+  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDh2dDlrY2RtN3gwMzh0NTZnbjhkMnMydDVvOXJhajc0dHZvcXd5dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/o1X5q5RhvcHFK3fXES/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDh2dDlrY2RtN3gwMzh0NTZnbjhkMnMydDVvOXJhajc0dHZvcXd5dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/HXBuDfbSZKrnglCmZv/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDh2dDlrY2RtN3gwMzh0NTZnbjhkMnMydDVvOXJhajc0dHZvcXd5dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/sCNZBmy5DDsZeb0evL/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDh2dDlrY2RtN3gwMzh0NTZnbjhkMnMydDVvOXJhajc0dHZvcXd5dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/qxpBvmlwD1wAR0EUx5/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDh2dDlrY2RtN3gwMzh0NTZnbjhkMnMydDVvOXJhajc0dHZvcXd5dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7NwZJANS7Foi3SRAeO/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDh2dDlrY2RtN3gwMzh0NTZnbjhkMnMydDVvOXJhajc0dHZvcXd5dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/OBSz5O065WULidqWIz/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Y3Q3ZmprbTI5bG8xdzJiMm1vZnk2aWQxcW0yZHlnMWNyYXY1dXhvbiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/3BKJ5ehjClcC4/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3cWZkMG5rY3kyajV1NWd1Zm0yeWZndnJucnlkYndkdjd4bWcwbG9zcCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/TPmPW6VBIBVNCvQQTj/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3dHYyZ3RmcTBkM2hlaXR2a3k5ZzU0bjFlbHdkb2ZkMmsxeDRodTgweiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/5L0OlgoZ4swepytsDx/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MXFudDJxNHZxYTRldXI0Ynk1eTU0cXo2bWJtOHN5bWRsNTB5NDJnMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7XkhpYfnkYdQ5hCD5H/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MXFudDJxNHZxYTRldXI0Ynk1eTU0cXo2bWJtOHN5bWRsNTB5NDJnMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/IsaozcCGAEREY/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MWhlb3M5eHJlcGtudTh4NmYzazR0dHQ2YWd3ZmM2dnc3endsZW1yaSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/D5sjRRD0Qx56HfptZ8/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MWhlb3M5eHJlcGtudTh4NmYzazR0dHQ2YWd3ZmM2dnc3endsZW1yaSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/BeeQTsRFu4PZyyoYqc/giphy.gif",
+  "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Y2tmN3oyZzZwMWx3MXdzNHdvcHF5bjZhcmkxdW1lcTk5OXgyOGNyMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/VdAco13QOvG0rcP6Fc/giphy.gif",
+];
+
+function DeskScreenVideo({ videoUrl }: { videoUrl: string }) {
+  const texture = useVideoTexture(videoUrl, { loop: true, muted: true, start: true });
+  return (
+    <mesh position={[0, 0, 0.045]}>
+      <planeGeometry args={[1.15, 0.65]} />
+      <meshStandardMaterial map={texture} toneMapped={false} />
+    </mesh>
+  );
+}
+
+function DeskScreenGif() {
+  const videoUrl = useMemo(() => {
+    const gifUrl = DESK_GIF_URLS[Math.floor(Math.random() * DESK_GIF_URLS.length)];
+    return gifUrl.replace('giphy.gif', 'giphy.mp4');
+  }, []);
+
+  return (
+    <group position={[0, 0.5, -0.8]}>
+      {/* Corps du moniteur */}
+      <mesh>
+        <boxGeometry args={[1.25, 0.75, 0.08]} />
+        <meshStandardMaterial color="#111111" roughness={0.9} />
+      </mesh>
+      {/* Écran vidéo — texture Three.js native, couvre exactement le mesh */}
+      <DeskScreenVideo videoUrl={videoUrl} />
     </group>
   );
 }
@@ -529,11 +577,8 @@ export default function SecurityRoomV2({
           <boxGeometry args={[0.15, 0.8, 2]} />
           <meshStandardMaterial color="#2a2a2a" />
         </mesh>
-        {/* Écran sur le bureau - PLUS GRAND */}
-        <mesh position={[0, 0.5, -0.8]}>
-          <boxGeometry args={[1.2, 0.7, 0.08]} />
-          <meshStandardMaterial color="#224422" emissive="#112211" emissiveIntensity={0.4} />
-        </mesh>
+        {/* Écran sur le bureau */}
+        <DeskScreenGif />
         {/* Clavier */}
         <mesh position={[0, 0.1, 0.3]}>
           <boxGeometry args={[1, 0.05, 0.4]} />
