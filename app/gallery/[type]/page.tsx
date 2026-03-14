@@ -73,12 +73,16 @@ export default function GalleryPage() {
 
   // Gestion du retour au hub
   const handleBackToHub = useCallback(() => {
-    console.log("[Gallery] Retour au hub");
     audioContext?.playDoorCreak?.();
     closeGallery();
-    // Utilisation de window.location pour forcer la navigation
     window.location.href = "/hub";
   }, [closeGallery, audioContext]);
+
+  // Navigation directe vers une autre gallery
+  const handleSwitchGallery = useCallback((target: MediaType) => {
+    if (target === type) return;
+    router.push(`/gallery/${target}`);
+  }, [type, router]);
 
   // Type invalide - affiche erreur
   if (!type) {
@@ -202,6 +206,33 @@ export default function GalleryPage() {
               {mediaList.length === 1 ? "FICHIER" : "FICHIERS"}
             </span>
           </motion.div>
+        </div>
+
+        {/* Navigation inter-galleries */}
+        <div className="max-w-7xl mx-auto mt-4 flex gap-2 justify-center relative z-30">
+          {(["photos", "gif", "videos"] as MediaType[]).map((t) => {
+            const colors = { photos: "#00ff55", gif: "#ffaa00", videos: "#ff3333" };
+            const labels = { photos: "PHOTOS", gif: "GIF", videos: "VIDEOS" };
+            const isActive = t === type;
+            return (
+              <button
+                key={t}
+                type="button"
+                onClick={() => handleSwitchGallery(t)}
+                className="px-4 py-1.5 font-mono text-sm transition-all duration-150 border cursor-pointer"
+                style={{
+                  borderColor: colors[t],
+                  color: isActive ? "#0a0a0a" : colors[t],
+                  backgroundColor: isActive ? colors[t] : "transparent",
+                  textShadow: isActive ? "none" : `0 0 8px ${colors[t]}80`,
+                  opacity: isActive ? 1 : 0.6,
+                  pointerEvents: "auto",
+                }}
+              >
+                {labels[t]}
+              </button>
+            );
+          })}
         </div>
       </header>
 
