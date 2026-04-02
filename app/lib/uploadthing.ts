@@ -39,6 +39,7 @@ export const uploadthingConfig = {
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WVEIdDKltg2q0G1asplkCOLhbMeXnujFyf67m", title: "not my tempo" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WDzXoQWacj7E6wXUiWelvtAL4Mso0OSqryCng", title: "essaie de pas rire" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WPg0Lp0T96BkDiuoTZYhCvVKXd4jcLmqSeEtw", title: "stinky basketball" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WGFZjdSZ7F4fMXb3QnN16ZzVBHu7YjsWyrUG8", title: "sexo" },
     ],
     videos: [
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W1eDnXmUWO09jLn82gSDhQMEyt4Zm3acbl7qV", // WIN_20260201_15_45_17_Pro.mp4
