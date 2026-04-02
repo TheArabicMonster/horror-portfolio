@@ -23,6 +23,10 @@ export const uploadthingConfig = {
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WQH5QZj6BEfxZAPqgV7WJ3XHItKevi4mGywuY", // 022esdvgasdfsga0b025dd1a3f7b7530304b25a0909.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W1AOkdtWO09jLn82gSDhQMEyt4Zm3acbl7qVB", // 1 CHANCE BALL.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WPshKJXT96BkDiuoTZYhCvVKXd4jcLmqSeEtw", // ce twt qui dit de la merde.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WyRoYzIDfUihncE4qsPQZamVDt5BGvpe8k9lA", // lutrhero mateen.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WIClOinFQMrk2n0KlDWeSqOmLTfFV19cwURph", // tout freddys.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WqIuqThrIOlChZevVbxkKJ32FGwBc8E0WH6ga", // cacboudinpièerre.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WaGSy8aP0m4LbstvkBoQJHAGNw3TZezXC2gpj", // ball mateen.png
     ],
     gif: [
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WU2CqLugRq6s2uQbEHGc1lUy8DPiZofNAeOBh", title: "speed moi hoche" },
@@ -34,6 +38,7 @@ export const uploadthingConfig = {
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WbyW86ZzixTleqvDjVrzmdUJMIkyPgpQ1ZOtL", title: "livre rakai" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WVEIdDKltg2q0G1asplkCOLhbMeXnujFyf67m", title: "not my tempo" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WDzXoQWacj7E6wXUiWelvtAL4Mso0OSqryCng", title: "essaie de pas rire" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WPg0Lp0T96BkDiuoTZYhCvVKXd4jcLmqSeEtw", title: "stinky basketball" },
     ],
     videos: [
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W1eDnXmUWO09jLn82gSDhQMEyt4Zm3acbl7qV", // WIN_20260201_15_45_17_Pro.mp4
