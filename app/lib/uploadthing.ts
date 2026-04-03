@@ -27,6 +27,7 @@ export const uploadthingConfig = {
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WIClOinFQMrk2n0KlDWeSqOmLTfFV19cwURph", // tout freddys.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WqIuqThrIOlChZevVbxkKJ32FGwBc8E0WH6ga", // cacboudinpièerre.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WaGSy8aP0m4LbstvkBoQJHAGNw3TZezXC2gpj", // ball mateen.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4Wg6P6v2o8PHjIN3DybTWhF4AUXsc5G7lwxEO9", // ajout photo galerie
     ],
     gif: [
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WU2CqLugRq6s2uQbEHGc1lUy8DPiZofNAeOBh", title: "speed moi hoche" },
