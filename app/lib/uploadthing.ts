@@ -51,7 +51,6 @@ export const uploadthingConfig = {
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WN4BQJMbVGlu3nIkmBceZ9gzjSqYsOxNbaQ06", title: "talking to wall" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WmD7t3ac5pVC2r4LQfSD9y5NWl1wJTamixdZs", title: "Jarvis smirk" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W2fDse8ekxWF4Kr9OJ5L3ZQbCXuh8gi6cUVNe", title: "back to back" },
-      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WTRAa9sqLFJGycjAxq59fNKY2IBCiQkVvOsup", title: "talking to wall" },
     ],
     videos: [
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W1eDnXmUWO09jLn82gSDhQMEyt4Zm3acbl7qV", // WIN_20260201_15_45_17_Pro.mp4
