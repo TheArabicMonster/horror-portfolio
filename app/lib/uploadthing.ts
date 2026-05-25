@@ -28,6 +28,12 @@ export const uploadthingConfig = {
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WqIuqThrIOlChZevVbxkKJ32FGwBc8E0WH6ga", // cacboudinpièerre.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WaGSy8aP0m4LbstvkBoQJHAGNw3TZezXC2gpj", // ball mateen.png
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4Wg6P6v2o8PHjIN3DybTWhF4AUXsc5G7lwxEO9", // ajout photo galerie
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4Wkvfu2By7FDzKaTP0IGo3qQsyOXYL4ZmNHf15", // 3artbi sad.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WT0r9hSqLFJGycjAxq59fNKY2IBCiQkVvOsup", // WIN_20260426_22_03_07_Pro.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WuYr3VXIweC3Ob75I8rFQGK9pYSVTP6gjZcUq", // 3arbi mpressed.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WGj0o57F4fMXb3QnN16ZzVBHu7YjsWyrUG8Ti", // tonotnmateen.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WqcEKJJrIOlChZevVbxkKJ32FGwBc8E0WH6ga", // 47515461e726d55a6f17c5c74c4ff8ac.png
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WuyXZuJIweC3Ob75I8rFQGK9pYSVTP6gjZcUq", // HHtZoaJW4AQJHqz.jpg
     ],
     gif: [
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WU2CqLugRq6s2uQbEHGc1lUy8DPiZofNAeOBh", title: "speed moi hoche" },
@@ -41,6 +47,11 @@ export const uploadthingConfig = {
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WDzXoQWacj7E6wXUiWelvtAL4Mso0OSqryCng", title: "essaie de pas rire" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WPg0Lp0T96BkDiuoTZYhCvVKXd4jcLmqSeEtw", title: "stinky basketball" },
       { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WGFZjdSZ7F4fMXb3QnN16ZzVBHu7YjsWyrUG8", title: "sexo" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WojDriIRmB6Hb1TdchofXLetVaE97rWCzAZkN", title: "you vs shakespeare" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WN4BQJMbVGlu3nIkmBceZ9gzjSqYsOxNbaQ06", title: "talking to wall" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WmD7t3ac5pVC2r4LQfSD9y5NWl1wJTamixdZs", title: "Jarvis smirk" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W2fDse8ekxWF4Kr9OJ5L3ZQbCXuh8gi6cUVNe", title: "back to back" },
+      { url: "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WTRAa9sqLFJGycjAxq59fNKY2IBCiQkVvOsup", title: "talking to wall" },
     ],
     videos: [
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W1eDnXmUWO09jLn82gSDhQMEyt4Zm3acbl7qV", // WIN_20260201_15_45_17_Pro.mp4
@@ -48,6 +59,8 @@ export const uploadthingConfig = {
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WFVkg9mdiyuxJ0NKDFpcZwoaWMQnetH2dq1UE", // 2026-02-15 16-29-17.mp4
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4W2ipL3RkxWF4Kr9OJ5L3ZQbCXuh8gi6cUVNeY", // mateen not quite my tempo.mp4
       "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WaOr4y0P0m4LbstvkBoQJHAGNw3TZezXC2gpj", // oh mince pas billy.mp4
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WPrdPbqdT96BkDiuoTZYhCvVKXd4jcLmqSeEt", // sexo mateen.mp4
+      "https://72y8mozbqb.ufs.sh/f/vuI8QAfh1O4WO9tRxAnD5LYXQs2hESAwIPGa6ZFkR3g9lvyj", // ereasedTatShit.mp4
     ],
   }
 };
